@@ -393,6 +393,10 @@ public class RepositoryWebClient implements RepositoryClient {
     return getList(RepositoryWebOpCodes.LIST_EVENTS);
   }
 
+  public String[] listModels() {
+    return getList(RepositoryWebOpCodes.LIST_MODELS);
+  }
+  
   // 2. Getters
 
   /* (non-Javadoc)

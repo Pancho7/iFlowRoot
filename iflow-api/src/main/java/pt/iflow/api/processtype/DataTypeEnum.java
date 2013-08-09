@@ -117,6 +117,18 @@ public enum DataTypeEnum {
       return type;
     }
   }
+  
+  public static Boolean isEnumDataType (String name) {
+    try {
+      System.out.println(name);
+      
+      @SuppressWarnings("unused")
+      Object ob = valueOf(name);
+      return true;
+    } catch(IllegalArgumentException actual) {
+      return false;
+    }
+  }
 
 
   private static enum Features {

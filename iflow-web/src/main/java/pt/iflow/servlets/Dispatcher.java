@@ -53,6 +53,7 @@ import pt.iflow.api.events.EventManager;
 import pt.iflow.api.flows.Flow;
 import pt.iflow.api.flows.FlowHolder;
 import pt.iflow.api.flows.IFlowData;
+import pt.iflow.api.models.ModelsManager;
 import pt.iflow.api.presentation.DateUtility;
 import pt.iflow.api.processannotation.ProcessAnnotationManager;
 import pt.iflow.api.processannotation.ProcessLabel;
@@ -442,6 +443,13 @@ public class Dispatcher extends HttpServlet {
       byte[] buffer, String comment) throws Exception {
     sendList(response, EventManager.get().listEvents(userInfo));
     logMsg(userInfo, "listEvents");
+  }
+
+  @RepositoryWebOp(code = RepositoryWebOpCodes.LIST_MODELS)
+  void listModels(UserInfoInterface userInfo, HttpServletResponse response, Repository rep, String name, String desc,
+      byte[] buffer, String comment) throws Exception {
+    sendList(response, ModelsManager.listModels());
+    logMsg(userInfo, "listModels");
   }
 
   @RepositoryWebOp(code = RepositoryWebOpCodes.LIST_PROCESS_TASK_ANNOTATION_LABELS)

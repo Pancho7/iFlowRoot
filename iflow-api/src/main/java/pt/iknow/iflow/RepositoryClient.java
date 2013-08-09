@@ -42,6 +42,8 @@ public interface RepositoryClient {
 
   public abstract String[] listEvents();
 
+  public abstract String[] listModels();
+
   public abstract byte[] getFlow(String name);
 
   public abstract byte[] getSubFlow(String name);

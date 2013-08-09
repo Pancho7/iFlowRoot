@@ -18,8 +18,12 @@ public class FormatsCellRenderer extends DefaultTableCellRenderer {
 
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {
-    DataTypeEnum dataType = (DataTypeEnum) table.getValueAt(row, typeCol);
-    Formats formats = Formats.getFormats(dataType);
+    Object ob = table.getValueAt(row, typeCol);
+    Formats formats=null;
+    if(ob instanceof DataTypeEnum){
+      DataTypeEnum dataType = (DataTypeEnum) table.getValueAt(row, typeCol);
+      formats = Formats.getFormats(dataType);
+    }
     // mask styles...
     if(null != formats) {
       for(Formats.Format fmt : formats.getFormats()) {

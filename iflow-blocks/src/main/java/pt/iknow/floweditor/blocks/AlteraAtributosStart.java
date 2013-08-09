@@ -10,6 +10,9 @@ package pt.iknow.floweditor.blocks;
  * @version 1.0
  */
 
+import integration.IntegrationFactory;
+import integration.ModelsAccess;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -20,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -35,6 +39,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import model.Models;
+
 import org.apache.commons.lang.StringUtils;
 
 import pt.iflow.api.processdata.DynamicBindDelegate;
@@ -43,6 +49,7 @@ import pt.iknow.floweditor.Atributo;
 import pt.iknow.floweditor.FlowEditorAdapter;
 import pt.iknow.floweditor.Formats;
 import pt.iknow.floweditor.IDesenho;
+import pt.iknow.iflow.RepositoryClient;
 import pt.iknow.utils.StringUtilities;
 import pt.iknow.utils.swing.CheckBoxCellEditor;
 import pt.iknow.utils.swing.CheckBoxCellRenderer;
@@ -84,6 +91,8 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
 
   private final String[] columnNamesVars;
 
+  //TODO Joao Marcos
+  
   
   // Mail start
   private static int MAILSTART_INFO_PROP_COUNT = 5;
@@ -451,26 +460,44 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
         }
       }
     }
-    if(desenho != null) {
+    if(desenho != null) {          
       Collection<Atributo> catalogo = desenho.getCatalogue();
+      
       List<Object[]> reservedData = getDynamicVariables();
       ArrayList<Object[]> dataAux = new ArrayList<Object[]>(catalogo.size());
       HashMap<Object,Object[]> removeAux = new HashMap<Object,Object[]>();
       for (Atributo attr : catalogo) {
         if(StringUtilities.isEmpty(attr.getNome())) continue;
         String sType = attr.getDataType();
-        DataTypeEnum type = DataTypeEnum.getDataType(sType);
-        Object[] elem = new Object[]{
-            attr.getNome(), 
-            attr.getInitValue(), 
-            type, 
-            attr.isSearchable(), 
-            attr.getPublicName(),
-            attr.getFormat(),
-            };
-        dataAux.add(elem);
-        removeAux.put(elem[0], elem);
+        if(DataTypeEnum.isEnumDataType(sType))
+        {
+            DataTypeEnum type = DataTypeEnum.getDataType(sType);
+            Object[] elem = new Object[]{
+                attr.getNome(), 
+                attr.getInitValue(), 
+                type, 
+                //sType,
+                attr.isSearchable(), 
+                attr.getPublicName(),
+                attr.getFormat(),
+                };
+            dataAux.add(elem);
+            removeAux.put(elem[0], elem);
+        }
+        else{
+          Object[] elem = new Object[]{
+              attr.getNome(), 
+              attr.getInitValue(), 
+              sType,
+              attr.isSearchable(), 
+              attr.getPublicName(),
+              attr.getFormat(),
+              };
+          dataAux.add(elem);
+          removeAux.put(elem[0], elem);
+        }
       }
+        
       for (Object[] elem : reservedData) {
           if (elem.length > 0 && removeAux.containsKey(elem[0])) {
             dataAux.remove(removeAux.remove(elem[0]));
@@ -485,7 +512,14 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
       jTableCatalog.setColumnSelectionAllowed(false);
       jTableCatalog.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       MyColumnEditorModel catProps = new MyColumnEditorModel();
-      catProps.addEditorForColumn(2, new ComboCellEditor(DataTypeEnum.values()));
+      
+      String[] dataTypes = addModelsVariables(DataTypeEnum.values());
+      
+      //criar String[]
+      //inserir lá DataTypeEnum.values()
+      //   mais o Abstract
+      //   mais as classes geradas
+      catProps.addEditorForColumn(2, new ComboCellEditor(dataTypes));
       CheckBoxCellEditor checkSearchable = new  CheckBoxCellEditor();
       catProps.addEditorForColumn(3, checkSearchable);
       catProps.addEditorForColumn(5, new FormatsCellEditor(2));
@@ -558,13 +592,37 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
     MyColumnEditorModel rmMSVars = new MyColumnEditorModel();
     jTableMSVars.setMyColumnEditorModel(rmMSVars);
 
-    
     jbInit();
 
     //this.setSize(480, 640);
     this.setSize(630, 640);
     setLocationRelativeTo(getParent());
     setVisible(true);
+  }
+
+  //TODO
+  private String[] addModelsVariables(DataTypeEnum[] enumValues) {
+    Object [] arrayRes = null;
+    Integer i = 0;
+    try {
+      RepositoryClient rep = getAdapter().getRepository();
+      String[] arrayModels = rep.listModels();
+      
+      arrayRes= new String[enumValues.length+arrayModels.length];
+      for(i=0;i<enumValues.length;i++)
+      { 
+        String aux = enumValues[i].toString();
+        arrayRes[i]= aux;
+      }
+      for(i=0;i<arrayModels.length;i++)
+      { 
+        String aux = arrayModels[i].toString();
+        arrayRes[i+enumValues.length]= aux;
+      }
+    } catch (Exception e) {
+      System.err.println(e.toString());      
+    }   
+    return (String[]) arrayRes;
   }
 
   /**

@@ -89,6 +89,11 @@ public final class RepositoryWebOpCodes {
    */
   public static final int LIST_EVENTS = 29;
 
+  /**
+   * OP code to list existing Events
+   */
+  public static final int LIST_MODELS = 134;
+
   // 2. Getters
   
   /**
