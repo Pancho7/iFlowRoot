@@ -984,7 +984,7 @@ public class ProcessData {
     return internalGetInterpreter(userInfo, mode, false);
   }
   
-    
+  //TODO JM
   private Interpreter internalGetInterpreter(UserInfoInterface userInfo, int mode, boolean forDB) {
     Interpreter bsh = new Interpreter();
     bsh.getClassManager().cacheClassInfo("BshUtils", BshUtils.class);
@@ -1043,6 +1043,7 @@ public class ProcessData {
       return result;
     
     Interpreter interpreter = null;
+    //TODO JM1
     try {
       interpreter = internalGetInterpreter(userInfo, 0, forDB);
       result = interpreter.eval(expression);
