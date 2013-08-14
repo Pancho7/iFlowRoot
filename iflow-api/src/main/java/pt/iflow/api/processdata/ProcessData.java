@@ -984,7 +984,7 @@ public class ProcessData {
     return internalGetInterpreter(userInfo, mode, false);
   }
   
-  //TODO JM
+  //TODO JMarcos
   private Interpreter internalGetInterpreter(UserInfoInterface userInfo, int mode, boolean forDB) {
     Interpreter bsh = new Interpreter();
     bsh.getClassManager().cacheClassInfo("BshUtils", BshUtils.class);
