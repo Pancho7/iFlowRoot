@@ -7,9 +7,9 @@ import pt.iflow.api.utils.Const;
 
 public class ModelsDataType implements ProcessDataType {
 
-  private String modelName;
+  private String modelName = DataTypeEnum.AbstractModel.toString();
   
-  public ModelsDataType(String modelName) {
+  public void setClass(String modelName) {
     this.modelName = modelName;
   }
   
@@ -19,8 +19,6 @@ public class ModelsDataType implements ProcessDataType {
 	}
 	
 	public Class<?> getSupportingClass() {
-//      return pt.iflow.api.documents.DocumentData.class;  
-      //return Document.class;
       return new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+modelName);
 	}
 

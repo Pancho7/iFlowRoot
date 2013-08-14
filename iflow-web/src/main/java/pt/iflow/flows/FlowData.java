@@ -42,6 +42,7 @@ import pt.iflow.api.licensing.LicenseService;
 import pt.iflow.api.licensing.LicenseServiceException;
 import pt.iflow.api.licensing.LicenseServiceFactory;
 import pt.iflow.api.processtype.DataTypeEnum;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.services.types.FlowClassGeneratorConvert;
 import pt.iflow.api.services.types.FlowDataConvert;
@@ -271,10 +272,11 @@ public class FlowData implements IFlowData {
            DataTypeEnum dataType = DataTypeEnum.getDataType(attr.getDataType());
            String format = attr.getFormat();
            if(StringUtils.isBlank(format)) format = mapSettings.get(dataType);
+           String modelsClass = dataType.isAbstractModel() ? attr.getDataType() : null;
 
-           this.setCatalogueVar(attr.getName(), attr.getInitVal(), dataType, attr.getIsSearchable(), attr.getPublicName(), format);
+           this.setCatalogueVar(attr.getName(), attr.getInitVal(), dataType, modelsClass, attr.getIsSearchable(), attr.getPublicName(), format);
          
-           flowClassFile.addVar(dataType, attr.getName());
+           flowClassFile.addVar(dataType, attr.getName(), modelsClass);
          }
        }
 
@@ -843,12 +845,16 @@ public class FlowData implements IFlowData {
        this.buildConnEndPorts(ui, htBlocks, htPorts, bEndtmp);
      }
    }
-
+/*
    private void setCatalogueVar(String sVar, String sValue, DataTypeEnum sType, boolean isSearchable, String sPublicName, String sDefaultFormat) {
+     setCatalogueVar(sVar, sValue, sType, null, isSearchable, sPublicName, sDefaultFormat);
+   }
+*/
+   private void setCatalogueVar(String sVar, String sValue, DataTypeEnum sType, String modelClass, boolean isSearchable, String sPublicName, String sDefaultFormat) {
      if (this._catalogue.hasVar(sVar))
        return;
      
-     this._catalogue.importDataType(sVar, sValue, sType, isSearchable, sPublicName, sDefaultFormat);
+     this._catalogue.importDataType(sVar, sValue, sType, modelClass, isSearchable, sPublicName, sDefaultFormat);
      if (isSearchable && indexPosition < Const.INDEX_COLUMN_COUNT)
        this._hmIndexVars.put(sVar, indexPosition++);
    }
@@ -1741,7 +1747,7 @@ class FlowClassGenerator {
     footer.append("}").append(linesep);
   }
   
-  public void addVar(DataTypeEnum type, String varname) {
+  public void addVar(DataTypeEnum type, String varname, String modelsClass) {
     if (!canGenerate()) {
       return;
     }
@@ -1749,6 +1755,9 @@ class FlowClassGenerator {
     ProcessDataType pdt = type.newDataTypeInstance();
     if (pdt == null)
       return;
+    if (type.isAbstractModel()) {
+      ((ModelsDataType)pdt).setClass(modelsClass);
+    }
     String supportingClass = pdt.getSupportingClass().getName();
     if (StringUtils.equals(supportingClass, "java.lang.String"))
       supportingClass = "String";

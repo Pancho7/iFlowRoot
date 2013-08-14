@@ -1,5 +1,7 @@
 package pt.iflow.api.processdata;
 
+import integration.ModelClassGenerator;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.text.ParseException;
@@ -7,11 +9,17 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import model.AbstractModelClass;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xml.utils.res.IntArrayWrapper;
+import org.hamcrest.core.IsInstanceOf;
 
 import pt.iflow.api.core.BeanFactory;
 import pt.iflow.api.documents.Documents;
+import pt.iflow.api.models.ModelsManager;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.utils.UserInfoInterface;
 import pt.iflow.connector.document.Document;
@@ -154,6 +162,8 @@ public class ProcessDataNameSpace extends BshNameSpace {
   protected void setVariableImpl(String name, Object value, boolean strictJava, boolean recurse ) throws UtilEvalError {
     // TODO se a variavel nao foi minha, delega para o pai
 
+    if(name.equals("jm"))
+      System.out.println("lalala");
 
     // primitives should have been wrapped
     if ( value == null )
@@ -166,8 +176,9 @@ public class ProcessDataNameSpace extends BshNameSpace {
       setSuperVariable(name, value, strictJava, recurse);
       return;//throw new UtilEvalError("oops");
     }
-
-    existing.setValue(value, BshVariable.V_ASSIGNMENT);
+    //TODO ver como é q se faz o set value para um tipo nao primitivo JM
+    if(!(value instanceof AbstractModelClass))
+      existing.setValue(value, BshVariable.V_ASSIGNMENT);
     
     if(isReadOnly()) return; // ignore if datasetmode not 1
     String varname = getProcessVariableName(name);
@@ -217,6 +228,10 @@ public class ProcessDataNameSpace extends BshNameSpace {
       else if (value instanceof java.util.Date) {
         procVar.setValue(value);
       }
+      else if (value instanceof AbstractModelClass) {
+     // TODO: JM
+        procVar.setValue(value);
+      }
       else {
         // TODO: fazer o set na mesma?? ou ignorar?
         System.err.println(this.getClass().getName() + "->unsupported value " + value.getClass().getName() + " for variable " + varname);
@@ -237,20 +252,25 @@ public class ProcessDataNameSpace extends BshNameSpace {
 
   protected Variable getVariableImpl( String name, boolean recurse ) throws UtilEvalError {
     Variable var = null;
-
+   
     if(variableCache.containsKey(name)) return variableCache.get(name);
 
     String varname = getProcessVariableName(name);
     Object obj = null;
     Class<?> clazz = null;
 
-
+   
     ProcessVariableValue processVar = process.get(varname);
     ProcessDataType dataType = process.getVariableDataType(varname);
 
     if(processVar != null) {
       clazz = dataType.getSupportingClass();
       obj = processVar.getValue();
+      if (dataType instanceof ModelsDataType/*&& obj==null*/) {
+        //obj = ModelsManager.getObjInstance((Integer)obj);
+        obj = ModelsManager.getObjInstance((Integer)1);
+        System.out.println("lalalwwwww");
+      }
       if(obj == null) {
         if(clazz.isPrimitive()) {
           try {
@@ -265,7 +285,17 @@ public class ProcessDataNameSpace extends BshNameSpace {
         else if (clazz == java.util.Date.class) {
           obj = null;
         }
-        else {
+        else if (dataType instanceof ModelsDataType) {
+            try {
+              obj = clazz.newInstance();
+            } catch (InstantiationException e) {
+              // TODO Auto-generated catch block
+              //e.printStackTrace();
+            } catch (IllegalAccessException e) {
+              // TODO Auto-generated catch block
+              //e.printStackTrace();
+            }
+        } else {
           // AVOID NULL VALUES HACK: override null var values with empty strings
           if (!(clazz.isAssignableFrom(java.lang.String.class))) {
             clazz = java.lang.String.class;

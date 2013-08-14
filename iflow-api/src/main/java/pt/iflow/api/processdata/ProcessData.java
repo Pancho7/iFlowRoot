@@ -1042,8 +1042,10 @@ public class ProcessData {
     if (StringUtils.isEmpty(expression))
       return result;
     
+    if(expression.equals("\"jm\".equals(jm.getAutor())"))
+      System.out.println("llllllll");
+    
     Interpreter interpreter = null;
-    //TODO JM1
     try {
       interpreter = internalGetInterpreter(userInfo, 0, forDB);
       result = interpreter.eval(expression);

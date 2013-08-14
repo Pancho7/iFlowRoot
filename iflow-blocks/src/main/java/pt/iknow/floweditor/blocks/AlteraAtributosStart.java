@@ -10,8 +10,6 @@ package pt.iknow.floweditor.blocks;
  * @version 1.0
  */
 
-import integration.IntegrationFactory;
-import integration.ModelsAccess;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -39,7 +37,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import model.Models;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -515,10 +512,6 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
       
       String[] dataTypes = addModelsVariables(DataTypeEnum.values());
       
-      //criar String[]
-      //inserir lá DataTypeEnum.values()
-      //   mais o Abstract
-      //   mais as classes geradas
       catProps.addEditorForColumn(2, new ComboCellEditor(dataTypes));
       CheckBoxCellEditor checkSearchable = new  CheckBoxCellEditor();
       catProps.addEditorForColumn(3, checkSearchable);
@@ -600,7 +593,7 @@ public class AlteraAtributosStart extends AbstractAlteraAtributos implements Alt
     setVisible(true);
   }
 
-  //TODO
+
   private String[] addModelsVariables(DataTypeEnum[] enumValues) {
     Object [] arrayRes = null;
     Integer i = 0;

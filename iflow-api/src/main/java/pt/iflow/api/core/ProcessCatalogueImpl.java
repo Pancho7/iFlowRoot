@@ -14,10 +14,12 @@ import org.apache.commons.lang.StringUtils;
 import pt.iflow.api.processdata.DynamicBindDelegate;
 import pt.iflow.api.processtype.BindableDataType;
 import pt.iflow.api.processtype.DataTypeEnum;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.processtype.TextDataType;
 import pt.iflow.api.utils.Const;
 import pt.iflow.api.utils.DataSetVariables;
+import pt.iknow.utils.StringUtilities;
 
 public class ProcessCatalogueImpl implements ProcessCatalogue {
 
@@ -190,13 +192,20 @@ public class ProcessCatalogueImpl implements ProcessCatalogue {
     importDataType(var, defaultValue, DataTypeEnum.getDataType(type), isSearchable, publicName, type);
   }
 
-  // import functions... Used as a special mechanism to something...
   public void importDataType(String var, String defaultValue, DataTypeEnum dataTypeEnum, boolean isSearchable, String publicName, String format) {
+    importDataType(var, defaultValue, dataTypeEnum, null, isSearchable, publicName, format);
+  }
+
+  // import functions... Used as a special mechanism to something...
+  public void importDataType(String var, String defaultValue, DataTypeEnum dataTypeEnum, String modelClass, boolean isSearchable, String publicName, String format) {
     ProcessDataType pdt = null;
     try {
       pdt = dataTypeEnum.getTypeClass().newInstance();
     } catch (Exception e) {
       pdt = dataTypeEnum.newDataTypeInstance(format);
+    }
+    if (dataTypeEnum.isAbstractModel() && StringUtilities.isNotEmpty(modelClass)) {
+      ((ModelsDataType)pdt).setClass(modelClass);
     }
     if(dataTypeEnum.isList()) {
       setListDataType(var, pdt, publicName);

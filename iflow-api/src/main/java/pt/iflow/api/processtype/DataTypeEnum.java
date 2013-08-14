@@ -6,17 +6,21 @@ import java.util.Map;
 
 import pt.iflow.api.utils.Logger;
 
+
 public enum DataTypeEnum {
   Text(TextDataType.class,Features.Single),
   Integer(IntegerDataType.class,Features.Single),
   Float(FloatDataType.class,Features.Single),
   Date(DateDataType.class,Features.Single),
+  AbstractModel(ModelsDataType.class,Features.Single),
   TextArray(TextDataType.class,Features.List),
   IntegerArray(IntegerDataType.class,Features.List),
   FloatArray(FloatDataType.class,Features.List),
   DateArray(DateDataType.class,Features.List),
+  AbstractModelArray(ModelsDataType.class,Features.List),
   Document(DocumentDataType.class,Features.List);
 
+  private static final String ARRAY= "Array";
   private final Class<? extends ProcessDataType> type;
   private final Features feature;
   private DataTypeEnum(Class<? extends ProcessDataType> type, Features feature) {
@@ -113,15 +117,17 @@ public enum DataTypeEnum {
       return valueOf(name);
     } catch(IllegalArgumentException actual) {
       DataTypeEnum type = deprecatedDataTypes.get(name);
-      if(null == type) type = Text;
+      //Se der problemas sera preciso ir ao modelsManager verificar o nome
+      //if(null == type) type = Text;
+      if(null == type) type = AbstractModel;
+      if(name.endsWith(ARRAY))
+          type = AbstractModelArray;
       return type;
     }
   }
   
   public static Boolean isEnumDataType (String name) {
-    try {
-      System.out.println(name);
-      
+    try {      
       @SuppressWarnings("unused")
       Object ob = valueOf(name);
       return true;
@@ -144,6 +150,11 @@ public enum DataTypeEnum {
       this.isSingle = isSingle;
       this.isList = isList;
     }
+  }
+
+
+  public boolean isAbstractModel() {
+    return (this.equals(AbstractModel)||this.equals(AbstractModelArray));
   }
 
 }
