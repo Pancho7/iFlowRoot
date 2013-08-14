@@ -4,10 +4,13 @@ import integration.ModelClassGenerator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+
 
 import model.AbstractModelClass;
 
@@ -268,8 +271,12 @@ public class ProcessDataNameSpace extends BshNameSpace {
       obj = processVar.getValue();
       if (dataType instanceof ModelsDataType/*&& obj==null*/) {
         //obj = ModelsManager.getObjInstance((Integer)obj);
-        obj = ModelsManager.getObjInstance((Integer)1);
-        System.out.println("lalalwwwww");
+        //obj = ModelsManager.getObjInstance((Integer)1);
+        try {
+          obj = getModelObject(1, clazz);
+        } catch (Exception e) {
+          System.err.println(e.toString());
+        }
       }
       if(obj == null) {
         if(clazz.isPrimitive()) {
@@ -288,13 +295,8 @@ public class ProcessDataNameSpace extends BshNameSpace {
         else if (dataType instanceof ModelsDataType) {
             try {
               obj = clazz.newInstance();
-            } catch (InstantiationException e) {
-              // TODO Auto-generated catch block
-              //e.printStackTrace();
-            } catch (IllegalAccessException e) {
-              // TODO Auto-generated catch block
-              //e.printStackTrace();
-            }
+            } catch (Exception e) {
+            } 
         } else {
           // AVOID NULL VALUES HACK: override null var values with empty strings
           if (!(clazz.isAssignableFrom(java.lang.String.class))) {
@@ -366,6 +368,35 @@ public class ProcessDataNameSpace extends BshNameSpace {
     return var;
   }
   
+  private Object getModelObject(Integer id, Class<?> clazz) {
+    Object obj = null;
+    try {
+      obj = clazz.newInstance();
+      
+      Object obj2 = ModelsManager.getObjInstance(id);
+           
+      Method[] metodosArray = obj2.getClass().getMethods();
+      
+      Map<String, Class<?>> props = ModelsManager.getModelProperties(id);
+      
+      for(int i=0; i < metodosArray.length; i++){
+        if(metodosArray[i].getName().startsWith("set")){
+          String sufix = metodosArray[i].getName().substring(3);
+          
+          System.out.println(sufix);
+          Class<?> clz = props.get(sufix);
+          if(sufix.equals("Id")) clz= java.lang.Integer.class;
+          Object result = (Object) obj2.getClass().getMethod("get"+sufix).invoke(obj2);
+          
+          clazz.getMethod("set"+sufix, clz).invoke(obj, result);
+        }
+      }
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    } 
+    return obj;
+  }
+
   private Document getDocument(Documents docBean, Object item) {
     if (item != null && docBean != null) {
       int docId = -1;
