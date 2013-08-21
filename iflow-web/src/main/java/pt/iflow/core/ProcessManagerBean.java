@@ -71,6 +71,7 @@ import pt.iflow.api.processdata.ProcessHeader;
 import pt.iflow.api.processdata.ProcessListVariable;
 import pt.iflow.api.processdata.ProcessSimpleVariable;
 import pt.iflow.api.processdata.ProcessXml;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.transition.FlowRolesTO;
 import pt.iflow.api.transition.FlowStateHistoryTO;
 import pt.iflow.api.transition.FlowStateLogTO;
@@ -967,6 +968,18 @@ public class ProcessManagerBean implements ProcessManager {
       db = DatabaseInterface.getConnection(userInfo);
       db.setAutoCommit(false);
 
+      //correr todfos os simple vars e os q forem models guardar o value
+      //for pv = p
+      Collection<String> list = procData.getSimpleVariableNames();
+      Iterator<String> it = list.iterator(); 
+      while(it.hasNext()){
+        ProcessSimpleVariable pv = procData.get(it.next());
+        if(pv.getType() instanceof ModelsDataType)
+            pv.saveExternal();
+      }
+      
+      
+      
       final String xml = new ProcessXml(procData).getXml();
 
       Timestamp tsLastUpdate = new Timestamp(procData.getLastUpdate().getTime());

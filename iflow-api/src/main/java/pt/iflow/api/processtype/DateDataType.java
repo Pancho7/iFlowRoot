@@ -41,4 +41,7 @@ public class DateDataType extends FormattedDataType implements ProcessDataType {
   public Class<?> getSupportingClass() {
     return Date.class;
   }
+  public void saveExternal(Object value) {
+    
+  }
 }

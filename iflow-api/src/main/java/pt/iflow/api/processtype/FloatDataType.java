@@ -62,4 +62,7 @@ public class FloatDataType extends FormattedDataType implements ProcessDataType 
     return result;
   }
 
+  public void saveExternal(Object value) {
+    
+  }
 }

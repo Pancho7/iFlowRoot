@@ -109,4 +109,7 @@ class InternalValue implements ProcessVariableValue {
     StringUtils.equals(getRawValue(), value.getRawValue());
   }
 
+  public void saveExternal() {
+    _type.saveExternal(_value);
+  }
 }

@@ -51,4 +51,8 @@ public class IntegerDataType extends FormattedDataType implements ProcessDataTyp
   public Class<?> getSupportingClass() {
     return int.class;
   }
+  
+  public void saveExternal(Object value) {
+    
+  }
 }

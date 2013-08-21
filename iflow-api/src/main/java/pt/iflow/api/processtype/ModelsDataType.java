@@ -2,6 +2,9 @@ package pt.iflow.api.processtype;
 
 import java.text.ParseException;
 
+import model.AbstractModelClass;
+
+import pt.iflow.api.models.ModelsManager;
 import pt.iflow.api.models.Reloader;
 import pt.iflow.api.utils.Const;
 
@@ -23,11 +26,15 @@ public class ModelsDataType implements ProcessDataType {
 	}
 
   public Object convertFrom(String rawvalue) throws ParseException {
-    return null;
+    //Vai buscar a instancia do objecto. 
+    if(rawvalue!=null)
+      return ModelsManager.getObjInstance(Integer.parseInt(rawvalue));
+    else 
+      return null;
   }
 
   public String convertTo(Object value) {
-    return null;
+    return ((AbstractModelClass)value).getId() == null ? null : ((AbstractModelClass)value).getId().toString();
   }
 
   public Object parse(String source) throws ParseException {
@@ -41,4 +48,12 @@ public class ModelsDataType implements ProcessDataType {
   public boolean isBindable() {
     return false;
   }
+
+  public void saveExternal(Object value) {
+    //TODO Guardar nos metas e se o id for null actualizar
+    if(value == null) return;
+    Integer id = ModelsManager.saveObj(value);
+    if (((AbstractModelClass)value).getId() == null) ((AbstractModelClass)value).setId(id);
+  }
+
 }

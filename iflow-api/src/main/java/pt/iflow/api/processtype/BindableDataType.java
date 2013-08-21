@@ -60,4 +60,7 @@ public class BindableDataType implements ProcessDataType {
     return true;
   }
 
+  public void saveExternal(Object value) {
+    
+  }
 }

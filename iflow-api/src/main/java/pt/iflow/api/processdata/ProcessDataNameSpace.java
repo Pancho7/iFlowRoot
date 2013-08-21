@@ -6,8 +6,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -165,7 +167,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
   protected void setVariableImpl(String name, Object value, boolean strictJava, boolean recurse ) throws UtilEvalError {
     // TODO se a variavel nao foi minha, delega para o pai
 
-    if(name.equals("jm"))
+    if(name.equals("_jm"))
       System.out.println("lalala");
 
     // primitives should have been wrapped
@@ -232,8 +234,11 @@ public class ProcessDataNameSpace extends BshNameSpace {
         procVar.setValue(value);
       }
       else if (value instanceof AbstractModelClass) {
-     // TODO: JM
+      // TODO: JM
         procVar.setValue(value);
+        //ModelsManager.saveObj(value);
+        //procVar.setValue(((AbstractModelClass) value).getId());
+        
       }
       else {
         // TODO: fazer o set na mesma?? ou ignorar?
@@ -262,7 +267,15 @@ public class ProcessDataNameSpace extends BshNameSpace {
     Object obj = null;
     Class<?> clazz = null;
 
-   
+    //TODO JM to clean
+    /*
+    HashMap<Integer, String> map = ModelsManager.getAllModels();
+    List<String> list1 = ModelsManager.getAllTagsFromModel(3);
+    List<String> list2 = ModelsManager.getAllModelsFromTag(1);
+    */
+    if(name.equals("_jma")||name.equals("_jm"))
+      System.out.println("");
+    
     ProcessVariableValue processVar = process.get(varname);
     ProcessDataType dataType = process.getVariableDataType(varname);
 
@@ -273,7 +286,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
         //obj = ModelsManager.getObjInstance((Integer)obj);
         //obj = ModelsManager.getObjInstance((Integer)1);
         try {
-          obj = getModelObject(1, clazz);
+          obj = getModelObject((AbstractModelClass)obj, clazz);
         } catch (Exception e) {
           System.err.println(e.toString());
         }
@@ -295,6 +308,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
         else if (dataType instanceof ModelsDataType) {
             try {
               obj = clazz.newInstance();
+              processVar.setValue(obj);
             } catch (Exception e) {
             } 
         } else {
@@ -314,6 +328,10 @@ public class ProcessDataNameSpace extends BshNameSpace {
       var = new BshVariable(name, clazz, obj, null);
     }
 
+    //TODO JM 
+    //Problema no caso de ser um array de modelo fatura. dá erro no getsupportingClass. Entra em loop. Ver se datatype = null
+    
+    
     ProcessListVariable listVar = process.getList(varname);
     if(var == null && null != listVar) {
       clazz = dataType.getSupportingClass();
@@ -368,27 +386,28 @@ public class ProcessDataNameSpace extends BshNameSpace {
     return var;
   }
   
-  private Object getModelObject(Integer id, Class<?> clazz) {
+  private Object getModelObject(AbstractModelClass obj2, Class<?> clazz) {
     Object obj = null;
     try {
       obj = clazz.newInstance();
-      
-      Object obj2 = ModelsManager.getObjInstance(id);
+      if(obj2==null)return obj;
+      //Object obj2 = ModelsManager.getObjInstance(objModel.getId());
            
       Method[] metodosArray = obj2.getClass().getMethods();
       
-      Map<String, Class<?>> props = ModelsManager.getModelProperties(id);
+      Map<String, Class<?>> props = ModelsManager.getModelProperties(Integer.parseInt(obj2.getDocModel()));
       
       for(int i=0; i < metodosArray.length; i++){
         if(metodosArray[i].getName().startsWith("set")){
           String sufix = metodosArray[i].getName().substring(3);
           
-          System.out.println(sufix);
+          //TODO JM
+          //System.out.println(sufix);
           Class<?> clz = props.get(sufix);
           if(sufix.equals("Id")) clz= java.lang.Integer.class;
           Object result = (Object) obj2.getClass().getMethod("get"+sufix).invoke(obj2);
-          
-          clazz.getMethod("set"+sufix, clz).invoke(obj, result);
+          if(result!=null)
+            clazz.getMethod("set"+sufix, clz).invoke(obj, result);
         }
       }
     } catch (Exception e) {

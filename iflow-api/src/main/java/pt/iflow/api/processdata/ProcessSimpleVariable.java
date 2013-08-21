@@ -14,6 +14,7 @@ public class ProcessSimpleVariable extends ProcessVariable implements ProcessVar
 	ProcessSimpleVariable(ProcessDataType type, Element xmlElement) throws ParseException {
 		super(type, xmlElement);
 		
+		//
 		_value = new InternalValue(_type, xmlElement.getChildNodes().item(0).getNodeValue());
 	}
 
@@ -93,4 +94,9 @@ public class ProcessSimpleVariable extends ProcessVariable implements ProcessVar
 	public boolean equals(ProcessVariableValue value) {
 		return _value.equals(value);
 	}
+	
+	  public void saveExternal() {
+	    _value.saveExternal();
+	  }
+
 }
