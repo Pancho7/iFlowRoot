@@ -272,7 +272,8 @@ public class FlowData implements IFlowData {
            DataTypeEnum dataType = DataTypeEnum.getDataType(attr.getDataType());
            String format = attr.getFormat();
            if(StringUtils.isBlank(format)) format = mapSettings.get(dataType);
-           String modelsClass = dataType.isAbstractModel() ? attr.getDataType() : null;
+           String aux= attr.getDataType();
+           String modelsClass = dataType.isAbstractModel() ? (dataType.isList() ? aux.substring(0,aux.lastIndexOf("Array")) : aux) : null;
 
            this.setCatalogueVar(attr.getName(), attr.getInitVal(), dataType, modelsClass, attr.getIsSearchable(), attr.getPublicName(), format);
          

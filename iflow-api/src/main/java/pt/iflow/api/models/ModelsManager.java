@@ -21,7 +21,7 @@ public class ModelsManager {
   
   
   static{  
-    IntegrationFactory.setBaseURL("http://localhost:8081/DocMetaTag/obj");
+    IntegrationFactory.setBaseURL("http://LXWIN7019.infosistema.com:8081/DocMetaTag/obj");
   }
   private static ModelsAccess modelsAcc = new ModelsAccess();
   private static MetatagsAccess metatagsAcc = new MetatagsAccess();

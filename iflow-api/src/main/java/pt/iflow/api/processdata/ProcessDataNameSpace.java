@@ -24,8 +24,10 @@ import org.hamcrest.core.IsInstanceOf;
 import pt.iflow.api.core.BeanFactory;
 import pt.iflow.api.documents.Documents;
 import pt.iflow.api.models.ModelsManager;
+import pt.iflow.api.models.Reloader;
 import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
+import pt.iflow.api.utils.Const;
 import pt.iflow.api.utils.UserInfoInterface;
 import pt.iflow.connector.document.Document;
 import bsh.BshNameSpace;
@@ -344,6 +346,14 @@ public class ProcessDataNameSpace extends BshNameSpace {
         docBean = BeanFactory.getDocumentsBean();
       }
       
+      
+      if (dataType instanceof ModelsDataType){
+        try {
+          clazz = clazz.newInstance().getClass();
+        } catch (Exception e) {
+          
+        }
+      }
       obj = Array.newInstance(clazz, length);
 
       for(int i = 0; i < length; i++) {

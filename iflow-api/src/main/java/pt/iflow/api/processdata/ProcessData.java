@@ -1,6 +1,8 @@
 package pt.iflow.api.processdata;
 
+
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ import pt.iflow.api.core.ProcessCatalogue;
 import pt.iflow.api.core.Repository;
 import pt.iflow.api.documents.DocumentData;
 import pt.iflow.api.documents.Documents;
+import pt.iflow.api.models.ModelsManager;
+import pt.iflow.api.models.Reloader;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.processtype.TextDataType;
 import pt.iflow.api.transition.ReportTO;
@@ -998,6 +1002,17 @@ public class ProcessData {
     } catch (Exception e) {
       // ignore
     } 
+    
+    File folder = new File(Const.MODELS_PACKAGE_PATH);
+    File[] listOfFiles = folder.listFiles();
+    for (int i = 0; i < listOfFiles.length; i++) {
+      String clazzName = listOfFiles[i].getName();
+      Class<?> myClazz = new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+clazzName.replace(".class", ""));
+      bsh.getClassManager().cacheClassInfo("modelsClasses."+clazzName.replace(".class", ""), myClazz);
+    
+    }
+    
+        
     ProcessDataNameSpace nameSpace = new ProcessDataNameSpace(userInfo, bsh, this, forDB);
     nameSpace.setProcessDataMode(mode);
     bsh.setNameSpace(nameSpace);
