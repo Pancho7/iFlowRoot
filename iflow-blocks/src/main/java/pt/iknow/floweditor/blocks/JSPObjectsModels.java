@@ -3,7 +3,7 @@ package pt.iknow.floweditor.blocks;
 import pt.iflow.api.datatypes.DataTypeInterface;
 import pt.iknow.floweditor.FlowEditorAdapter;
 
-public class JSPObjectsModels extends JSPFieldData{
+public class JSPObjectsModels extends JSPFieldData {
 
 //id constructor
  public JSPObjectsModels(FlowEditorAdapter adapter, int anID) {
