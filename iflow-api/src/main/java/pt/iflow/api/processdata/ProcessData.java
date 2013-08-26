@@ -3,6 +3,9 @@ package pt.iflow.api.processdata;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import pt.iflow.api.documents.DocumentData;
 import pt.iflow.api.documents.Documents;
 import pt.iflow.api.models.ModelsManager;
 import pt.iflow.api.models.Reloader;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.processtype.TextDataType;
 import pt.iflow.api.transition.ReportTO;
@@ -43,6 +47,7 @@ import pt.iknow.utils.DataSet;
 import pt.iknow.utils.DataSetImpl;
 import bsh.EvalError;
 import bsh.Interpreter;
+import bsh.NameSpace;
 
 public class ProcessData {
 
@@ -1007,7 +1012,7 @@ public class ProcessData {
     File[] listOfFiles = folder.listFiles();
     for (int i = 0; i < listOfFiles.length; i++) {
       String clazzName = listOfFiles[i].getName();
-      Class<?> myClazz = new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+clazzName.replace(".class", ""));
+      Class<?> myClazz = ModelsDataType.getSupportingClassForModel(clazzName.replace(".class", ""));
       bsh.getClassManager().cacheClassInfo("modelsClasses."+clazzName.replace(".class", ""), myClazz);
     
     }

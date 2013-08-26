@@ -1395,6 +1395,8 @@ public class JSPFieldData {
         ((JCheckBox)ec).setSelected((new Boolean(asValue)).booleanValue());
       }      
       break;
+    //case JSPFieldData.nregrsmo:
+    //case JSPFieldData.nPROP_Tregrspa:
     case JSPFieldData.nPROP_TEXT_AREA:
       if (ec != null) {
         ((JTextArea)ec).setText(asValue);

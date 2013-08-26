@@ -1,6 +1,7 @@
 package pt.iflow.api.processtype;
 
 import java.text.ParseException;
+import java.util.HashMap;
 
 import model.AbstractModelClass;
 
@@ -11,6 +12,7 @@ import pt.iflow.api.utils.Const;
 public class ModelsDataType implements ProcessDataType {
 
   private String modelName = DataTypeEnum.AbstractModel.toString();
+  private static HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>();
   
   public void setClass(String modelName) {
     this.modelName = modelName;
@@ -22,7 +24,17 @@ public class ModelsDataType implements ProcessDataType {
 	}
 	
 	public Class<?> getSupportingClass() {
-      return new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+modelName);
+	  if (!loadedClasses.containsKey(modelName)) {
+        Class<?> c = new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+modelName);
+        loadedClasses.put(modelName, c);
+      }
+      return loadedClasses.get(modelName);
+	}
+	
+	public static Class<?> getSupportingClassForModel(String modelName) {
+	    Class<?> c = new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+modelName);
+	    loadedClasses.put(modelName, c);
+	    return loadedClasses.get(modelName);
 	}
 
   public Object convertFrom(String rawvalue) throws ParseException {

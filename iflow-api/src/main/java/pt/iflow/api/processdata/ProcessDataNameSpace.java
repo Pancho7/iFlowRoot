@@ -183,7 +183,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       setSuperVariable(name, value, strictJava, recurse);
       return;//throw new UtilEvalError("oops");
     }
-    //TODO ver como é q se faz o set value para um tipo nao primitivo JM
+    //TODO JM ver como é q se faz o set value para um tipo nao primitivo
     if(!(value instanceof AbstractModelClass))
       existing.setValue(value, BshVariable.V_ASSIGNMENT);
     
@@ -330,8 +330,6 @@ public class ProcessDataNameSpace extends BshNameSpace {
       var = new BshVariable(name, clazz, obj, null);
     }
 
-    //TODO JM 
-    //Problema no caso de ser um array de modelo fatura. dá erro no getsupportingClass. Entra em loop. Ver se datatype = null
     
     
     ProcessListVariable listVar = process.getList(varname);
@@ -349,12 +347,19 @@ public class ProcessDataNameSpace extends BshNameSpace {
       
       if (dataType instanceof ModelsDataType){
         try {
-          clazz = clazz.newInstance().getClass();
+          obj = clazz.newInstance();
+          Class<?> arrayType = Array.newInstance(clazz,length).getClass();
+         // obj= Array.newInstance(arrayType,length);
+         // obj =  new   (Object)Array.newInstance(clazz, length);
+          System.out.println("lalala");
         } catch (Exception e) {
-          
-        }
+          e.printStackTrace();
+        } 
+      
       }
-      obj = Array.newInstance(clazz, length);
+      obj= Array.newInstance(clazz,length);
+      
+      
 
       for(int i = 0; i < length; i++) {
         Object item = listVar.getItemValue(i);
