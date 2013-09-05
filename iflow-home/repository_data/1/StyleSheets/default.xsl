@@ -1231,6 +1231,95 @@ label.subheader {
 			</xsl:choose>
 		</xsl:attribute>
 
+	  <xsl:if test="type = 'object_model'">
+	      <label>
+	          <xsl:attribute name="class">
+	              <xsl:value-of select="name"/>
+	              <xsl:text> field</xsl:text>
+	          </xsl:attribute>
+	      </label>
+	      <xsl:choose>  
+	          <xsl:when test="disabled='true'">
+	              <xsl:value-of select="value/text()"/>
+	          </xsl:when>
+	          <xsl:otherwise>
+	              <input type="text">
+	                  <xsl:attribute name="class">
+	                      <xsl:text>txt</xsl:text>
+	                      <xsl:if test="disabled='true'">
+	                          <xsl:text> readonly</xsl:text>			
+	                      </xsl:if>
+	                  </xsl:attribute>
+	                  <xsl:attribute name="id">
+	                      <xsl:value-of select="variable/text()"/>
+	                  </xsl:attribute>
+	                  <xsl:attribute name="name">
+	                      <xsl:value-of select="variable/text()"/>
+	                  </xsl:attribute>
+	                  <xsl:attribute name="value">
+	                      <xsl:value-of select="value/text()"/>
+	                  </xsl:attribute>
+	                  <xsl:attribute name="size">
+	                      <xsl:value-of select="size/text()"/>
+	                  </xsl:attribute>
+	                  <xsl:attribute name="maxlength">
+	                      <xsl:value-of select="maxlength/text()"/>
+	                  </xsl:attribute>
+	                  <xsl:if test="string-length(onchange) &gt; 0">
+	                      <xsl:attribute name="onchange">
+	                          <xsl:value-of select="onchange/text()"/>
+	                      </xsl:attribute>
+	                  </xsl:if>
+	                  <xsl:if test="string-length(onblur) &gt; 0">
+	                      <xsl:attribute name="onblur">
+	                          <xsl:value-of select="onblur/text()"/>
+	                      </xsl:attribute>
+	                  </xsl:if>
+	                  <xsl:if test="string-length(onfocus) &gt; 0">
+	                      <xsl:attribute name="onfocus">
+	                          <xsl:value-of select="onfocus/text()"/>
+	                      </xsl:attribute>
+	                  </xsl:if>
+	                  <xsl:attribute name="title">
+	                      <xsl:value-of select="tooltip/text()"/>
+	                  </xsl:attribute>
+	              </input>
+	          </xsl:otherwise>
+	      </xsl:choose>
+	      <xsl:value-of select="suffix/text()"/>
+	      <script type="text/javascript">
+	          <xsl:choose>
+	              <xsl:when test="datatype='pt.iknow.datatypes.Date'">
+	                  var fn<xsl:value-of select="variable/text()"/> = new LiveValidation('<xsl:value-of select="variable/text()"/>', { onValid: "", validMessage: "", insertAfterWhatNode: "label_<xsl:value-of select="variable/text()"/>" });
+	                  fn<xsl:value-of select="variable/text()"/>.add(Validate.Presence, { failureMessage: " " })
+	                  fn<xsl:value-of select="variable/text()"/>.add(Validate.Format, { pattern: /[0-3][0-9]\/[0-1][0-9]/i, failureMessage: "Formato Incorrecto!" } );
+	              </xsl:when>
+	              <xsl:when test="datatype='pt.iknow.datatypes.Text'">
+	                  <xsl:if test="obligatory='true'">
+	                      var fn<xsl:value-of select="variable/text()"/> = new LiveValidation('<xsl:value-of select="variable/text()"/>', { onValid: "", validMessage: " ", insertAfterWhatNode: "label_<xsl:value-of select="variable/text()"/>" });
+	                      fn<xsl:value-of select="variable/text()"/>.add(Validate.Presence, { failureMessage: " " })
+	                  </xsl:if>
+	              </xsl:when>
+	              <xsl:otherwise>
+	              </xsl:otherwise>
+	          </xsl:choose>
+	      </script>
+	      <!--
+	      <label>
+			<xsl:attribute name="class">
+				<xsl:value-of select="modellabel"/>
+				<xsl:text> field</xsl:text>
+				<xsl:if test="$multicol &gt; 1">
+					<xsl:text> multicol</xsl:text>
+				</xsl:if>
+			</xsl:attribute>
+			<xsl:for-each select="modelslist/model/modelfieldlist/modelfield">           
+			    <xsl:attribute name="name">
+			        <xsl:value-of select="value/text()"/>
+			    </xsl:attribute>
+            </xsl:for-each>
+        </label>-->
+	  </xsl:if>
       <xsl:if test="type = 'header'">
         <label>
 			<xsl:attribute name="class">

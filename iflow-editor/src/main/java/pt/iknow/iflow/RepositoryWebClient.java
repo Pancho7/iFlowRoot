@@ -397,6 +397,10 @@ public class RepositoryWebClient implements RepositoryClient {
     return getList(RepositoryWebOpCodes.LIST_MODELS);
   }
   
+  public String[] listTags(String model) {
+    return getList(RepositoryWebOpCodes.LIST_TAGS, model);
+  }
+  
   // 2. Getters
 
   /* (non-Javadoc)

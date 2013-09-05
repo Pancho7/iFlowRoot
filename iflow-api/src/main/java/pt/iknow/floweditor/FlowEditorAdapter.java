@@ -31,7 +31,11 @@ public interface FlowEditorAdapter {
   
   public void showError(String msg);
   
+  public void showWarning(String message);
+  
   public Atributo newAtributo(String nome, String valor, String descricao);
   
   public String getBlockKey();
+
+  
 }

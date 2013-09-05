@@ -10,7 +10,6 @@ import pt.iflow.api.utils.Const;
 import model.AbstractModelClass;
 import model.Metatags;
 import model.Models;
-import model.Objects;
 
 import integration.IntegrationFactory;
 import integration.MetatagsAccess;
@@ -26,6 +25,7 @@ public class ModelsManager {
   private static ModelsAccess modelsAcc = new ModelsAccess();
   private static MetatagsAccess metatagsAcc = new MetatagsAccess();
   private static ObjectsAccess objAcc = new ObjectsAccess();
+  //private static ObjectMetatagAccess objMetatagAcc = new ObjectMetatagAccess();
   
   public static Object[] listModels() {
     int i = 0;
@@ -88,6 +88,7 @@ public class ModelsManager {
      //((AbstractModelClass)value).setId(6);
       
      id = objAcc.saveObjects((AbstractModelClass)value);
+     ((AbstractModelClass)value).setId(id);
     } catch (Exception e) {
       System.err.println(e.toString());
     } 
@@ -103,7 +104,6 @@ public class ModelsManager {
       while(it.hasNext()) {
         Models m = it.next();
         mapRes.put(m.getModelspk().getId(), m.getModelName());
-        System.out.println("lalala"+m.getModelName()); 
       }
     } catch (Exception e) {
       System.err.println(e.toString());
@@ -143,5 +143,22 @@ public class ModelsManager {
     } 
     return listRes;
    }
+
+  public static Object[] listTags(String modelName) {
+    int i = 0;
+    String[] tagsArray =null;
+    try {
+      List<String> tagNameList = modelsAcc.GETAllTagNameByModelName(modelName);
+      tagsArray = new String[tagNameList.size()];
+      Iterator<String> it = tagNameList.iterator();
+      while (it.hasNext())
+      {
+        tagsArray[i++] = it.next();
+      }
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
+    return tagsArray;
+  }
   
 }

@@ -13,6 +13,7 @@ public class FormProps {
   public final static String sFIELD_TYPE = "type";
   public final static String sDATATYPE = "datatype";
   public final static String sVARIABLE = "variable";
+  public final static String sMODELSVARNAME = "modelVarName";
   public final static String sMACROTITLE = "macrotitle";
   public final static String sTITLE = "title";
   public final static String sSTYLESHEET = "stylesheet";

@@ -90,10 +90,14 @@ public final class RepositoryWebOpCodes {
   public static final int LIST_EVENTS = 29;
 
   /**
-   * OP code to list existing Events
+   * OP code to list existing models
    */
   public static final int LIST_MODELS = 134;
 
+  /**
+   * OP code to list existing model tags
+   */
+  public static final int LIST_TAGS = 135;
   // 2. Getters
   
   /**

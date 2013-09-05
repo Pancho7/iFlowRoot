@@ -44,6 +44,8 @@ public interface RepositoryClient {
 
   public abstract String[] listModels();
 
+  public abstract String[] listTags(String modelo);
+  
   public abstract byte[] getFlow(String name);
 
   public abstract byte[] getSubFlow(String name);
@@ -174,5 +176,7 @@ public interface RepositoryClient {
   public String undeployFlow(String flowname);
 
   public String setFlowReady2Run(String flowname);
+
+  
 
 }

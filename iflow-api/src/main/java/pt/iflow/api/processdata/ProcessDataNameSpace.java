@@ -1,15 +1,11 @@
 package pt.iflow.api.processdata;
 
-import integration.ModelClassGenerator;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 
@@ -18,16 +14,11 @@ import model.AbstractModelClass;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xml.utils.res.IntArrayWrapper;
-import org.hamcrest.core.IsInstanceOf;
 
 import pt.iflow.api.core.BeanFactory;
 import pt.iflow.api.documents.Documents;
-import pt.iflow.api.models.ModelsManager;
-import pt.iflow.api.models.Reloader;
 import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
-import pt.iflow.api.utils.Const;
 import pt.iflow.api.utils.UserInfoInterface;
 import pt.iflow.connector.document.Document;
 import bsh.BshNameSpace;
@@ -184,7 +175,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       return;//throw new UtilEvalError("oops");
     }
     //TODO JM ver como é q se faz o set value para um tipo nao primitivo
-    if(!(value instanceof AbstractModelClass))
+    //if(!(value instanceof AbstractModelClass))
       existing.setValue(value, BshVariable.V_ASSIGNMENT);
     
     if(isReadOnly()) return; // ignore if datasetmode not 1
@@ -276,7 +267,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
     List<String> list2 = ModelsManager.getAllModelsFromTag(1);
     */
     if(name.equals("_jma")||name.equals("_jm"))
-      System.out.println("");
+      System.out.println("lalala");
     
     ProcessVariableValue processVar = process.get(varname);
     ProcessDataType dataType = process.getVariableDataType(varname);
@@ -284,7 +275,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
     if(processVar != null) {
       clazz = dataType.getSupportingClass();
       obj = processVar.getValue();
-      if (dataType instanceof ModelsDataType/*&& obj==null*/) {
+      if (dataType instanceof ModelsDataType/*&& obj!=null*/) {
         //obj = ModelsManager.getObjInstance((Integer)obj);
         //obj = ModelsManager.getObjInstance((Integer)1);
         try {
@@ -292,8 +283,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
         } catch (Exception e) {
           System.err.println(e.toString());
         }
-      }
-      if(obj == null) {
+      } else if(obj == null) {
         if(clazz.isPrimitive()) {
           try {
             Class<?> boxClass = Primitive.boxType(clazz);
@@ -307,13 +297,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
         else if (clazz == java.util.Date.class) {
           obj = null;
         }
-        else if (dataType instanceof ModelsDataType) {
-            try {
-              obj = clazz.newInstance();
-              processVar.setValue(obj);
-            } catch (Exception e) {
-            } 
-        } else {
+        else {
           // AVOID NULL VALUES HACK: override null var values with empty strings
           if (!(clazz.isAssignableFrom(java.lang.String.class))) {
             clazz = java.lang.String.class;
@@ -348,7 +332,8 @@ public class ProcessDataNameSpace extends BshNameSpace {
       if (dataType instanceof ModelsDataType){
         try {
           obj = clazz.newInstance();
-          Class<?> arrayType = Array.newInstance(clazz,length).getClass();
+          //Class<?> arrayType = 
+              Array.newInstance(clazz,length).getClass();
          // obj= Array.newInstance(arrayType,length);
          // obj =  new   (Object)Array.newInstance(clazz, length);
           System.out.println("lalala");
@@ -410,7 +395,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
            
       Method[] metodosArray = obj2.getClass().getMethods();
       
-      Map<String, Class<?>> props = ModelsManager.getModelProperties(Integer.parseInt(obj2.getDocModel()));
+      //Map<String, Class<?>> props = ModelsManager.getModelProperties(Integer.parseInt(obj2.getDocModel()));
       
       for(int i=0; i < metodosArray.length; i++){
         if(metodosArray[i].getName().startsWith("set")){
@@ -418,8 +403,8 @@ public class ProcessDataNameSpace extends BshNameSpace {
           
           //TODO JM
           //System.out.println(sufix);
-          Class<?> clz = props.get(sufix);
-          if(sufix.equals("Id")) clz= java.lang.Integer.class;
+          Class<?> clz = obj2.getClass().getMethod("get"+sufix).getReturnType();
+          //if(sufix.equals("Id")) clz= java.lang.Integer.class;
           Object result = (Object) obj2.getClass().getMethod("get"+sufix).invoke(obj2);
           if(result!=null)
             clazz.getMethod("set"+sufix, clz).invoke(obj, result);

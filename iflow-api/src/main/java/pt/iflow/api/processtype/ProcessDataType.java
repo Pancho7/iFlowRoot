@@ -5,5 +5,5 @@ public interface ProcessDataType extends VariableConverter, VariableFormatter {
 	public String toString();
 	public Class<?> getSupportingClass();
     public boolean isBindable();
-    public void saveExternal(Object value);
+    public String saveExternal(Object value);
 }

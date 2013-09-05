@@ -110,6 +110,6 @@ class InternalValue implements ProcessVariableValue {
   }
 
   public void saveExternal() {
-    _type.saveExternal(_value);
+    _rawvalue = _type.saveExternal(_value);
   }
 }

@@ -1520,6 +1520,10 @@ public class AlteraAtributosFormTemplate extends AbstractAlteraAtributos impleme
         // show error message
         getAdapter().showError(fde.getMessage());
       }
+      catch (ModelsDataException mde) {
+        // show error message
+        getAdapter().showWarning(mde.getMessage());
+      }
     }
 
 

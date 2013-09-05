@@ -31,7 +31,7 @@ public class TextDataType implements ProcessDataType {
     return false;
   }
   
-  public void saveExternal(Object value) {
-   
+  public String saveExternal(Object value) {
+    return null;
   }
 }

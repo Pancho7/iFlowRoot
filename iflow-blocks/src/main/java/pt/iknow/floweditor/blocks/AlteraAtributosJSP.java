@@ -1504,7 +1504,6 @@ public class AlteraAtributosJSP extends AbstractAlteraAtributos implements Alter
       JSPFieldData fd = this.getSelectedFieldData();
       try {
         fd.saveData();
-
         // if we get here, then fd is ok! save it and close editor window
         this._parent.setTableRow(fd);
         dispose();
@@ -1512,6 +1511,10 @@ public class AlteraAtributosJSP extends AbstractAlteraAtributos implements Alter
       catch (FieldDataException fde) {
         // show error message
         getAdapter().showError(fde.getMessage());
+      }
+      catch (ModelsDataException mde) {
+        // show warning message
+        getAdapter().showWarning(mde.getMessage());
       }
     }
 

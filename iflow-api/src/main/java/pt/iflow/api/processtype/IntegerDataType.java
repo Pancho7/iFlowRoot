@@ -52,7 +52,7 @@ public class IntegerDataType extends FormattedDataType implements ProcessDataTyp
     return int.class;
   }
   
-  public void saveExternal(Object value) {
-    
+  public String saveExternal(Object value) {
+    return null;
   }
 }

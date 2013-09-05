@@ -1,6 +1,7 @@
 package pt.iknow.floweditor.blocks;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -36,6 +39,7 @@ import org.exolab.castor.xml.ValidationException;
 
 import pt.iflow.api.blocks.FormProps;
 import pt.iflow.api.datatypes.DataTypeInterface;
+import pt.iflow.api.processtype.DataTypeEnum;
 import pt.iflow.api.utils.NameValuePair;
 import pt.iflow.api.xml.ConnectorMarshaller;
 import pt.iflow.api.xml.FlowMarshaller;
@@ -227,6 +231,10 @@ public class JSPFieldData {
   public final static int nPROP_POPUP_CALLER_VARIABLE = 116;
   public final static int nPROP_POPUP_VARIABLES = 117;
   public final static int nPROP_FORM_TEMPLATE = 118;
+  public final static int nPROP_MODELS_LABEL = 119;
+  public final static int nPROP_MODELS_RULES_AREA = 120;
+  public final static int nPROP_TAGS_RULES_AREA = 121;
+  public final static int nPROP_MODELS_VAR_NAME = 122;
   // ...
 
 
@@ -354,13 +362,15 @@ public class JSPFieldData {
   protected static String[] _saFormTemplates = new String[] { "" }; //$NON-NLS-1$
 
   protected static String[] listOfSuportFlows = new String[]{""};
+  
+  protected static HashMap<Integer, List<String>> modelsSyntax = new HashMap<Integer, List<String>>();
+  protected static HashMap<Integer, List<String>> tagsSyntax = new HashMap<Integer, List<String>>();
 
   private static boolean initComplete = false;
   
   synchronized static void initMaps(FlowEditorAdapter adapter) {
     if(initComplete) return;
     initComplete = true;
-    
     sCHOOSE = adapter.getString("JSPFieldData.choose"); //$NON-NLS-1$
     sHOUR_FORMAT_NONE = adapter.getString("JSPFieldData.tootltip." + FormProps.HOUR_FORMAT);
     _saHourFormats[0] = sHOUR_FORMAT_NONE;
@@ -402,6 +412,14 @@ public class JSPFieldData {
     "type"); //$NON-NLS-1$
     _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_TEXT),
     "text"); //$NON-NLS-1$
+    _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_MODELS_LABEL),
+        "modelLabel"); //$NON-NLS-1$
+    _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_MODELS_RULES_AREA),
+        "modelRulesArea"); //$NON-NLS-1$
+    _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_TAGS_RULES_AREA),
+        "modelRulesTagArea"); //$NON-NLS-1$
+    _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_MODELS_VAR_NAME),
+        "modelVarName"); //$NON-NLS-1$    
     _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_DATA_TYPE),
     "editordatatype"); //$NON-NLS-1$
     _hmPropCodeNames.put(new Integer(JSPFieldData.nPROP_DATA_TYPE_CLASS),
@@ -626,6 +644,14 @@ public class JSPFieldData {
         adapter.getString("JSPFieldData.proplabel.field_type_code")); //$NON-NLS-1$
     _hmPropLabels.put(new Integer(JSPFieldData.nPROP_TEXT),
         adapter.getString("JSPFieldData.proplabel.text")); //$NON-NLS-1$
+    _hmPropLabels.put(new Integer(JSPFieldData.nPROP_MODELS_LABEL),
+        adapter.getString("JSPFieldData.proplabel.modelLabel")); //$NON-NLS-1$
+    _hmPropLabels.put(new Integer(JSPFieldData.nPROP_MODELS_RULES_AREA),
+        adapter.getString("JSPFieldData.proplabel.modelRulesArea")); //$NON-NLS-1$
+    _hmPropLabels.put(new Integer(JSPFieldData.nPROP_TAGS_RULES_AREA),
+        adapter.getString("JSPFieldData.proplabel.modelRulesTagArea")); //$NON-NLS-1$
+    _hmPropLabels.put(new Integer(JSPFieldData.nPROP_MODELS_VAR_NAME),
+        adapter.getString("JSPFieldData.proplabel.modelVarName")); //$NON-NLS-1$    
     _hmPropLabels.put(new Integer(JSPFieldData.nPROP_DATA_TYPE),
         adapter.getString("JSPFieldData.proplabel.data_type")); //$NON-NLS-1$
     _hmPropLabels.put(new Integer(JSPFieldData.nPROP_DATA_TYPE_CLASS),
@@ -1021,6 +1047,11 @@ public class JSPFieldData {
   // the required properties
   protected ArrayList<Integer> _alRequiredProps = null;
 
+  //the models properties
+  protected ArrayList<Integer> _alModelProps = null;
+
+  
+  
   // property's dependencies
   // KEY: Integer with prop's id
   // VALUE: PropDependency with dependencies
@@ -1050,6 +1081,8 @@ public class JSPFieldData {
   protected JDialog _parent = null;
 
   protected transient FlowEditorAdapter adapter;
+
+  private String modelsVarName;
   
   public JSPFieldData(FlowEditorAdapter adapter) {
     initMaps(adapter);
@@ -1196,6 +1229,11 @@ public class JSPFieldData {
       if(!this._alRequiredProps.contains(afd._alRequiredProps.get(i)))
         this._alRequiredProps.add(afd._alRequiredProps.get(i));
     }
+    
+    for (int i=0; i < afd._alModelProps.size(); i++) {
+      if(!this._alModelProps.contains(afd._alModelProps.get(i)))
+        this._alModelProps.add(afd._alModelProps.get(i));
+    }
 
     this._hmPropDependencies.putAll(afd._hmPropDependencies);// = new HashMap<Integer, PropDependency>(afd._hmPropDependencies);
 
@@ -1224,6 +1262,7 @@ public class JSPFieldData {
     this._alEditSingleProps = new ArrayList<Integer>();
     this._alEditMultipleProps = new ArrayList<Integer>();
     this._alRequiredProps = new ArrayList<Integer>();
+    this._alModelProps = new ArrayList<Integer>();
     this._hmPropDependencies = new HashMap<Integer, PropDependency>();
     this._hmPropTypes = new HashMap<Integer, Integer>();
     this._hsDisableDataTypes = new HashSet<Integer>();
@@ -1390,7 +1429,7 @@ public class JSPFieldData {
     case JSPFieldData.nPROP_FILE_IS_IMAGE:
     case JSPFieldData.nPROP_BUTTON_IGNORE_FORM_PROCESSING:
     case JSPFieldData.nPROP_BUTTON_IGNORE_FORM_VALIDATION:
-    case JSPFieldData.nPROP_BUTTON_CONFIRM_ACTION:
+    case JSPFieldData.nPROP_BUTTON_CONFIRM_ACTION: 
       if (ec != null) {
         ((JCheckBox)ec).setSelected((new Boolean(asValue)).booleanValue());
       }      
@@ -1398,16 +1437,25 @@ public class JSPFieldData {
     //case JSPFieldData.nregrsmo:
     //case JSPFieldData.nPROP_Tregrspa:
     case JSPFieldData.nPROP_TEXT_AREA:
+    case JSPFieldData.nPROP_MODELS_RULES_AREA:
+    case JSPFieldData.nPROP_TAGS_RULES_AREA:
       if (ec != null) {
         ((JTextArea)ec).setText(asValue);
       }
       break;
+      //TODO JM
+    /*case JSPFieldData.nPROP_MODELS_LABEL:
+      if (ec != null) {
+        ((JTextArea)ec).setText(asValue);
+      }
+      break;*/
     case JSPFieldData.nPROP_FORM_TEMPLATE:
       if (ec != null) {
         ((JComboBox) ec).setSelectedItem(asValue);
       }
       break;
     case JSPFieldData.nPROP_VAR_NAME:
+    case JSPFieldData.nPROP_MODELS_VAR_NAME:
       if (ec != null) {
         ((JComboBox) ec).setSelectedItem(asValue);
       }
@@ -2541,6 +2589,26 @@ public class JSPFieldData {
         ((JTextArea)jValue).setText(stmp);
         jValue.setBackground(AlteraAtributosJSP.cBG_COLOR);
         break;
+      case JSPFieldData.nPROP_MODELS_RULES_AREA:
+        if (jValue == null) {
+          jValue = new JTextArea(10,10);
+          ((JTextArea)jValue).setBorder(BorderFactory.createLineBorder(Color.GRAY));
+          /*if(!modelsVarName.equals("AbstractModel"))
+            ((JTextArea)jValue).setEnabled(false); TODO JM*/
+          this.setEditComponent(iProp, jValue);
+        }
+        ((JTextArea)jValue).setText(stmp);
+        jValue.setBackground(AlteraAtributosJSP.cBG_COLOR);
+        break;
+      case JSPFieldData.nPROP_TAGS_RULES_AREA:
+        if (jValue == null) {
+          jValue = new JTextArea(10,10);
+          ((JTextArea)jValue).setBorder(BorderFactory.createLineBorder(Color.GRAY));
+          this.setEditComponent(iProp, jValue);
+        }
+        ((JTextArea)jValue).setText(stmp);
+        jValue.setBackground(AlteraAtributosJSP.cBG_COLOR);
+        break;
       case JSPFieldData.nPROP_LIST_OF_POPUP_FLOWS:
       {
         if (jValue == null) {
@@ -2592,6 +2660,16 @@ public class JSPFieldData {
         ((JComboBox) jValue).setSelectedItem(stmp);
       }
         break;
+      case JSPFieldData.nPROP_MODELS_VAR_NAME: {
+        if (jValue == null) {
+          JComboBox comboBox = new JComboBox();
+          Object[] elements = getModelsCatalogue();
+          AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
+          this.setEditComponent(iProp, jValue = comboBox);
+        }
+        ((JComboBox) jValue).setSelectedItem(stmp);
+      }
+        break;
       default:
         // DEFAULT IS TEXT...
         if (jValue == null) {
@@ -2635,7 +2713,6 @@ public class JSPFieldData {
       if (this._hmPropDependencies.containsKey(iProp)) {
 
         pd = this._hmPropDependencies.get(iProp);
-
         stmp = this.getProperty(iProp);
         if (stmp == null) stmp = ""; //$NON-NLS-1$
         jValue = getEditComponent(iProp);
@@ -2668,6 +2745,7 @@ public class JSPFieldData {
         case JSPFieldData.nPROP_DATE_FORMAT:
         case JSPFieldData.nPROP_FILE_SIGNATURE_TYPE:
         case JSPFieldData.nPROP_BUTTON_TYPE:
+        case JSPFieldData.nPROP_MODELS_VAR_NAME:
           // item listener: combobox
           ((JComboBox)jValue).addItemListener(new DependencyComboListener(jValue, pd, altmp, altmp2));
           break;
@@ -2699,6 +2777,8 @@ public class JSPFieldData {
           ((JCheckBox)jValue).addItemListener(new DependencyCheckListener(jValue, pd, altmp, altmp2));
           break;
         case JSPFieldData.nPROP_TEXT_AREA:
+        case JSPFieldData.nPROP_MODELS_RULES_AREA:
+        case JSPFieldData.nPROP_TAGS_RULES_AREA:
           //      ((JTextArea)jValue).addDocumentListener(new DependencyTextListener(jValue, pd, altmp, altmp2));
           break;
         case JSPFieldData.nPROP_DATASOURCE:
@@ -2845,6 +2925,15 @@ public class JSPFieldData {
           ((JComboBox) jValue).setSelectedItem(stmp);
         }
           break;
+        case JSPFieldData.nPROP_MODELS_VAR_NAME: {
+          if (jValue == null) {
+            JComboBox comboBox = new JComboBox();
+            Object[] elements = getModelsCatalogue();
+            AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
+            this.setEditComponent(iProp, jValue = comboBox);
+          }
+          ((JComboBox) jValue).setSelectedItem(stmp);
+        }
         case JSPFieldData.nPROP_PP_PASS_TO_LINK:
         case JSPFieldData.nPROP_USE_LINKS:
         case JSPFieldData.nPROP_OUTPUT_ONLY:
@@ -2874,6 +2963,26 @@ public class JSPFieldData {
         case JSPFieldData.nPROP_TEXT_AREA:
           if (jValue == null) {
             jValue = new JTextArea(20,40);
+            this.setEditComponent(iRow, iProp, jValue);
+          }
+          ((JTextArea)jValue).setText(stmp);
+          jValue.setBackground(AlteraAtributosJSP.cBG_COLOR);
+          break;
+        case JSPFieldData.nPROP_MODELS_RULES_AREA:
+          if (jValue == null) {
+            jValue = new JTextArea(10,10);
+            ((JTextArea)jValue).setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            /*if(!modelsVarName.equals("AbstractModel"))
+              ((JTextArea)jValue).setEnabled(false);*/
+            this.setEditComponent(iRow, iProp, jValue);
+          }
+          ((JTextArea)jValue).setText(stmp);
+          jValue.setBackground(AlteraAtributosJSP.cBG_COLOR);
+          break;
+        case JSPFieldData.nPROP_TAGS_RULES_AREA:
+          if (jValue == null) {
+            jValue = new JTextArea(10,10);
+            ((JTextArea)jValue).setBorder(BorderFactory.createLineBorder(Color.GRAY));
             this.setEditComponent(iRow, iProp, jValue);
           }
           ((JTextArea)jValue).setText(stmp);
@@ -3060,6 +3169,7 @@ public class JSPFieldData {
     return this._editPanel;
   } // getEditPanel
 
+  
   private String[] getSaFormTemplates() {
     // Form templates
     String[] formTemplates = JSPFieldData._saFormTemplates;
@@ -3085,6 +3195,28 @@ public class JSPFieldData {
       ret[i] = ((Atributo) catalogue[i]).getNome();
     return ret;
   }
+  
+  private Object[] getModelsCatalogue() {
+    Object[] catalogue = adapter.getDesenho().getCatalogue().toArray();
+    
+    List<String> list = new ArrayList<String>();
+    for (int i = 0; i < catalogue.length; i++){
+      Atributo atr = ((Atributo) catalogue[i]);
+      try{
+        if(!DataTypeEnum.isEnumDataType(atr.getDataType())||DataTypeEnum.valueOf(atr.getDataType()).isAbstractModel())
+          list.add(((Atributo) catalogue[i]).getNome());
+      }catch(Exception e){
+      }
+    }
+    String[] ret = new String[list.size()];
+    Iterator<String> it = list.iterator();
+    int i = 0;
+    while(it.hasNext()){
+      ret[i++] = it.next();
+    }
+    return ret;
+  }
+
 
   private JButton makeControlButton(String asImageIconName,
       String asToolTipText,
@@ -3118,20 +3250,23 @@ public class JSPFieldData {
   }
 
   public void saveData()
-  throws FieldDataException {
+  throws FieldDataException, ModelsDataException {
     this.saveData(true);
   }
 
   @SuppressWarnings("unchecked")
   public void saveData(boolean abValidate)
-  throws FieldDataException {
+  throws FieldDataException, ModelsDataException {
 
     Integer iRow = null;
     Integer iProp = null;
     String stmp = null;
     JComponent jValue = null;
-    boolean bError = false;
+    boolean bError1 = false;
+    boolean bError2 = false;
+    
     FieldDataException fde = null;
+    ModelsDataException mde = null;
 
     // first single props
     for (int i=0; i < this._alEditSingleProps.size(); i++) {
@@ -3166,6 +3301,10 @@ public class JSPFieldData {
         case JSPFieldData.nPROP_VAR_NAME:
           stmp = (String) (((JComboBox) jValue).getSelectedItem());
           break;
+        case JSPFieldData.nPROP_MODELS_VAR_NAME:
+          stmp = (String) (((JComboBox) jValue).getSelectedItem());
+          modelsVarName = stmp;
+          break;
         case JSPFieldData.nPROP_PP_PASS_TO_LINK:
         case JSPFieldData.nPROP_USE_LINKS:
         case JSPFieldData.nPROP_OUTPUT_ONLY:
@@ -3189,6 +3328,13 @@ public class JSPFieldData {
           stmp = String.valueOf(((JCheckBox)jValue).isSelected());
           break;
         case JSPFieldData.nPROP_TEXT_AREA:
+        case JSPFieldData.nPROP_MODELS_RULES_AREA:
+          if(getDatatype(modelsVarName).equals("AbstractModel"))
+            stmp = ((JTextArea)jValue).getText();
+          else
+            stmp = "*.deny\n "+getDatatype(modelsVarName)+(".allow");
+          break;
+        case JSPFieldData.nPROP_TAGS_RULES_AREA:
           stmp = ((JTextArea)jValue).getText();
           break;
         default:
@@ -3201,14 +3347,26 @@ public class JSPFieldData {
         validateData(iProp,stmp);
       }
       catch (FieldDataException fdexc) {
-        if (!bError) {
+        if (!bError1) {
           // first time
           fde = fdexc;
         }
         else {
           fde.append(fdexc);
         }
-        bError = true;
+        bError1 = true;
+
+        // property not ok; abort saving
+        continue;
+      } catch (ModelsDataException mdexc) {
+        if (!bError2) {
+          // first time
+          mde = mdexc;
+        }
+        else {
+          mde.append(mdexc);
+        }
+        bError2 = true;
 
         // property not ok; abort saving
         continue;
@@ -3253,8 +3411,13 @@ public class JSPFieldData {
           case JSPFieldData.nPROP_BUTTON_TYPE:
             stmp = (String)(((JComboBox)jValue).getSelectedItem());
             break;
+            
           case JSPFieldData.nPROP_VAR_NAME:
             stmp = (String) (((JComboBox) jValue).getSelectedItem());
+            break;
+          case JSPFieldData.nPROP_MODELS_VAR_NAME:
+            stmp = (String) (((JComboBox) jValue).getSelectedItem());
+            modelsVarName = stmp;
             break;
           case JSPFieldData.nPROP_PP_PASS_TO_LINK:
           case JSPFieldData.nPROP_USE_LINKS:
@@ -3279,6 +3442,13 @@ public class JSPFieldData {
             stmp = String.valueOf(((JCheckBox)jValue).isSelected());
             break;
           case JSPFieldData.nPROP_TEXT_AREA:
+          case JSPFieldData.nPROP_MODELS_RULES_AREA:
+            if(modelsVarName.equals("AbstractModel"))
+              stmp = ((JTextArea)jValue).getText();
+            else
+              stmp = "*\\.deny\\n"+getDatatype(modelsVarName)+("\\.allow");
+            break;
+          case JSPFieldData.nPROP_TAGS_RULES_AREA:
             stmp = ((JTextArea)jValue).getText();
             break;
           default:
@@ -3291,14 +3461,26 @@ public class JSPFieldData {
           validateData(iRow,iProp,stmp);
         }
         catch (FieldDataException fdexc) {
-          if (!bError) {
+          if (!bError1) {
             // first time
             fde = fdexc;
           }
           else {
             fde.append(fdexc);
           }
-          bError = true;
+          bError1 = true;
+
+          // property not ok; abort saving
+          continue;
+        }catch (ModelsDataException mdexc) {
+          if (!bError2) {
+            // first time
+            mde = mdexc;
+          }
+          else {
+            mde.append(mdexc);
+          }
+          bError2 = true;
 
           // property not ok; abort saving
           continue;
@@ -3310,18 +3492,21 @@ public class JSPFieldData {
       } // for i
     } // for row
 
-    if (abValidate && bError) {
-      throw fde;
+    if (abValidate && (bError1 || bError2)) {
+      if(fde!=null)
+        throw fde;
+      else 
+        throw mde;
     }
   }
 
   private void validateData(Integer aiPropID, String asValue)
-  throws FieldDataException {
+  throws FieldDataException,ModelsDataException {
     this.validateData(null,aiPropID,asValue);
   }
 
   private void validateData(Integer aiRow, Integer aiPropID, String asValue)
-  throws FieldDataException {
+  throws FieldDataException, ModelsDataException {
 
     Integer itmp = null;
     int ntmp = -1;
@@ -3382,8 +3567,152 @@ public class JSPFieldData {
       default:
       }
     }
+    
+    //check models validation data
+    if (this._alModelProps.contains(aiPropID)) {
+      RepositoryClient rep = adapter.getRepository();
+      //String[] models = rep.listModels();
+      if (asValue.equals(null)||asValue.equals("")) {
+        throw new ModelsDataException(adapter,aiRow,aiPropID);
+      }
+      if(aiPropID==120){
+        //check models syntax
+        if(!checkModelRules(asValue,modelsVarName,modelsSyntax)){
+          modelsSyntax = new HashMap<Integer, List<String>>();
+          tagsSyntax = new HashMap<Integer, List<String>>();
+          throw new ModelsDataException(adapter,aiRow,aiPropID);
+        }
+          
+      }
+      if(aiPropID==121){
+        //check tags syntax
+        if(!checkTagRules(asValue,modelsVarName,rep,tagsSyntax)){
+          modelsSyntax = new HashMap<Integer, List<String>>();
+          tagsSyntax = new HashMap<Integer, List<String>>();
+          throw new ModelsDataException(adapter,aiRow,aiPropID);
+        }
+          
+      }
+    }
+    //System.out.println("Fim funcao");
   }
   
+  private boolean checkTagRules(String asValue,String modelsVarName, RepositoryClient rep,HashMap<Integer, List<String>> res) {
+    String[] lineEval = asValue.split("\n");    
+    String modelo="";
+    String campo="";
+    String prop="";
+    String valor="";
+    
+    for(int i= 0; i<lineEval.length; i++){
+      if(!lineEval[i].startsWith("//")){
+      String[] lineSplit = lineEval[i].split("\\.");
+        if(lineSplit.length==4){
+          List<String> list = new ArrayList<String>();
+          modelo = lineSplit[0];
+          campo = lineSplit[1];
+          prop = lineSplit[2];
+          valor = lineSplit[3];
+          if(isValidModelo(modelo,modelsVarName) && idValidCampo(campo,modelo,rep) && isValidPropTag(prop)&& isValidValor(valor)){
+            list.add(modelo);
+            list.add(campo);
+            list.add(prop);
+            list.add(valor);
+            res.put(i, list);
+          }else 
+            return false;       
+        }else
+            return false;   
+      }
+    }
+    return true;
+  }
+
+  
+
+  private boolean checkModelRules(String asValue, String models,HashMap<Integer, List<String>> res) {
+    String[] lineEval = asValue.split("\n");    
+    String modelo="";
+    String prop="";
+    for(int i= 0; i<lineEval.length; i++){
+      if(!lineEval[i].startsWith("//")){
+         String[] lineSplit = lineEval[i].split("\\.");
+         if(lineSplit.length==2){
+           List<String> list = new ArrayList<String>();
+           modelo = lineSplit[0];
+           prop = lineSplit[1];
+           if(isValidModelo(modelo,models) && isValidPropModel(prop)){
+             list.add(modelo);
+             list.add(prop);
+             res.put(i, list);
+           }else 
+             return false;       
+         }else
+          return false;     
+      }
+    }
+    return true;
+  }
+
+  private boolean isValidPropModel(String prop) {
+    prop = prop.toUpperCase();
+    if(prop.equals("*"))
+      return true;
+    if(prop.equals("DENY"))
+      return true;
+    if(prop.equals("ALLOW"))
+      return true;
+    return false;
+  }
+
+  private boolean isValidModelo(String modelo,String modelsVarName) {
+    
+    /*if(Arrays.asList(models).contains(modelo))
+    return true;*/
+    if(modelo.equals("*"))
+      return true;
+    String dataType = getDatatype(modelsVarName);
+    if(modelo.equals("*")&&dataType.equals("AbstractModel"))
+        return true;
+    if(!dataType.equals(""))
+      return true;
+    return false;
+  }
+  
+  public String getDatatype(String modelsVarName) {
+    Object[] catalogue = adapter.getDesenho().getCatalogue().toArray();
+    for (int i = 0; i < catalogue.length; i++){
+      Atributo atr =  ((Atributo) catalogue[i]);
+      if(atr.getNome().equals(modelsVarName))
+        return atr.getDataType();
+    }
+    return "";
+  }
+
+  private boolean isValidValor(String valor) {
+    valor = valor.toUpperCase();
+    if(valor.equals("TRUE")||valor.equals("FALSE"))
+      return true;
+    return false;
+  }
+
+  private boolean isValidPropTag(String prop) {
+    prop = prop.toUpperCase();
+    String[] props = {"VISIBLE","MANDATORY","EDITABLE"};
+    if(Arrays.asList(props).contains(prop))
+      return true;
+    return false;
+  }
+
+  private boolean idValidCampo(String campo, String modelo,RepositoryClient rep) {
+    String[] fields = rep.listTags(modelo);
+    if(campo.equals("*"))
+      return true;
+    if(Arrays.asList(fields).contains(campo))
+      return true;
+    return false;
+  }
+
   private NameValuePair<String, String> getConnectorItem(String stmp) {
     NameValuePair<String, String> retObj =
       new NameValuePair<String, String>(sCHOOSE);
@@ -3407,6 +3736,7 @@ public class JSPFieldData {
     public static final int nTRUE = 3;
     public static final int nFALSE = 4;
     public static final int nEMPTY_OR_VALUE = 5;
+    public static final int nABSTRACT_MODEL = 6;
 
     private int _nValueAction = -1;
     private int _nValueType = -1;
@@ -3510,7 +3840,7 @@ public class JSPFieldData {
           break;
         case PropDependency.nTRUE:
           // boolean
-          if (aoValue != null) {
+          if (aoValue != null) { 
             if (abStringValue) {
               sValue = (String)aoValue;
               if (!sValue.equals("")) { //$NON-NLS-1$
@@ -3541,6 +3871,12 @@ public class JSPFieldData {
               retObj = true;
             }
           }
+          break;
+        case PropDependency.nABSTRACT_MODEL:
+          if(getDatatype((String)aoValue).equals("AbstractModel")||getDatatype((String)aoValue).equals("AbstractModelArray"))
+            retObj=false;
+          else 
+            retObj=true;
           break;
         default:
         }

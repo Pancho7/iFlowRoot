@@ -2,6 +2,8 @@ package pt.iknow.floweditor.blocks;
 
 import pt.iflow.api.datatypes.DataTypeInterface;
 import pt.iknow.floweditor.FlowEditorAdapter;
+import pt.iknow.floweditor.blocks.JSPFieldData.PropDependency;
+import pt.iknow.floweditor.blocks.JSPFieldData.PropDependencyItem;
 
 public class JSPObjectsModels extends JSPFieldData {
 
@@ -35,16 +37,13 @@ public class JSPObjectsModels extends JSPFieldData {
    this._nFieldType = JSPFieldTypeEnum.FIELD_TYPE_OBJECTSMODELS;
 
    // add text single properties
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_TEXT));
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_VAR_NAME));
-   // INI - DIMENSIONS
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_WIDTH));
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_HEIGHT));
-   // FIM - DIMENSIONS
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_DISABLE_COND));
-   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_OUTPUT_ONLY));
+   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_MODELS_LABEL));
+   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_MODELS_VAR_NAME));
+   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_MODELS_RULES_AREA));
+   this._alEditSingleProps.add(new Integer(JSPFieldData.nPROP_TAGS_RULES_AREA));
 
    // add static/constant properties
+   
    DataTypeInterface dti = loadDataType(adapter, "pt.iflow.api.datatypes.Text");
    if(dti != null) {
      this.setStaticProperty(JSPFieldData.nPROP_DATA_TYPE, dti.getDescription());
@@ -53,16 +52,21 @@ public class JSPObjectsModels extends JSPFieldData {
    }
 
    // add required properties
-   this._alRequiredProps.add(new Integer(JSPFieldData.nPROP_TEXT));
-   this._alRequiredProps.add(new Integer(JSPFieldData.nPROP_VAR_NAME));
-   this._alRequiredProps.add(new Integer(JSPFieldData.nPROP_COLS));
-   this._alRequiredProps.add(new Integer(JSPFieldData.nPROP_ROWS));
+   
+   this._alRequiredProps.add(new Integer(JSPFieldData.nPROP_MODELS_VAR_NAME));
+   
+   // add models props
+   this._alModelProps.add(new Integer(JSPFieldData.nPROP_MODELS_RULES_AREA));
+   this._alModelProps.add(new Integer(JSPFieldData.nPROP_TAGS_RULES_AREA));
+   
+   
 
-   // set non-string properties types
-   this._hmPropTypes.put(new Integer(JSPFieldData.nPROP_COLS), new Integer(JSPFieldData.nPOSITIVE_NUMBER_PERCENT));
-   this._hmPropTypes.put(new Integer(JSPFieldData.nPROP_ROWS), new Integer(JSPFieldData.nPOSITIVE_NUMBER));
-
-   // add prop dependencies
+   
+   PropDependency pd = new PropDependency(JSPFieldData.nPROP_MODELS_VAR_NAME, PropDependency.nDISABLE, PropDependency.nABSTRACT_MODEL);
+   PropDependencyItem pdi = new PropDependencyItem(JSPFieldData.nPROP_MODELS_RULES_AREA, PropDependency.nENABLE);
+   pd.addDependency(pdi);
+   this._hmPropDependencies.put(new Integer(JSPFieldData.nPROP_MODELS_VAR_NAME), pd);
+   
 
  }
 }

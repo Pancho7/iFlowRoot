@@ -28,4 +28,13 @@ public class Erro {
         mensagem,Mesg.WARN,
         JOptionPane.ERROR_MESSAGE);
     }
+    
+    /****************************************************
+     * cria uma caiza de dialogo com a mensagem recebida
+     */
+    public Erro(String mensagem,JFrame janela,int warningMessage) {
+        JOptionPane.showMessageDialog(janela,
+        mensagem,Mesg.WARN,
+        warningMessage);
+    }
 }

@@ -451,6 +451,13 @@ public class Dispatcher extends HttpServlet {
     sendList(response, ModelsManager.listModels());
     logMsg(userInfo, "listModels");
   }
+  
+  @RepositoryWebOp(code = RepositoryWebOpCodes.LIST_TAGS)
+  void listTags(UserInfoInterface userInfo, HttpServletResponse response, Repository rep, String name, String desc,
+      byte[] buffer, String comment) throws Exception {
+    sendList(response, ModelsManager.listTags(name));
+    logMsg(userInfo, "listTags");
+  }
 
   @RepositoryWebOp(code = RepositoryWebOpCodes.LIST_PROCESS_TASK_ANNOTATION_LABELS)
   void listProcessTaskAnnotationLabels(UserInfoInterface userInfo, HttpServletResponse response, Repository rep, String name,

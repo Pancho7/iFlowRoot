@@ -1509,6 +1509,10 @@ public class AlteraAtributosDetalheProcesso extends AbstractAlteraAtributos impl
         // show error message
         adapter.showError(fde.getMessage());
       }
+      catch (ModelsDataException fde) {
+        // show error message
+        adapter.showWarning(fde.getMessage());
+      }
     }
 
 

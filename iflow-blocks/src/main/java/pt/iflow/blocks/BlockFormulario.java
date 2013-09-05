@@ -57,6 +57,7 @@ import pt.iflow.api.processdata.ProcessData;
 import pt.iflow.api.processdata.ProcessListItem;
 import pt.iflow.api.processdata.ProcessListVariable;
 import pt.iflow.api.processdata.ProcessSimpleVariable;
+import pt.iflow.api.processdata.ProcessVariable;
 import pt.iflow.api.processdata.ProcessVariableValue;
 import pt.iflow.api.processtype.DateDataType;
 import pt.iflow.api.processtype.FloatDataType;
@@ -491,7 +492,7 @@ public class BlockFormulario extends Block implements FormOperations {
         nFieldCounter++;
 
         Properties props = abBlock.getFieldProperties(userInfo, fieldNumber);
-        
+
         props.setProperty(FormProps.JSP, sJSP);
         props.setProperty(FormProps.FORM_NAME, sFormName);
         
@@ -708,10 +709,13 @@ public class BlockFormulario extends Block implements FormOperations {
         // now set "value" field (if applicable) as well as form suffix
         // first single properties
         String varName = props.getProperty(FormProps.sVARIABLE);
-        if (StringUtils.isNotEmpty(varName)) {
-
+        if(StringUtils.isEmpty(varName))
+          varName = props.getProperty(FormProps.sMODELSVARNAME);
+        
+        if (StringUtils.isNotEmpty(varName)) {  
           fi.initVariable(userInfo, procData, varName, props);
           
+
           String fieldContent = null;
 
           ProcessVariableValue value = null;

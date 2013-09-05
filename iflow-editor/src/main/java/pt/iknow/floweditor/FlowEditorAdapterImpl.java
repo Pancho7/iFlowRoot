@@ -1,6 +1,7 @@
 package pt.iknow.floweditor;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import pt.iflow.api.msg.IMessages;
 import pt.iknow.iflow.RepositoryClient;
@@ -65,6 +66,10 @@ public class FlowEditorAdapterImpl implements FlowEditorAdapter {
 
   public void showError(String msg) {
     new Erro(msg, this.janela);  //$NON-NLS-1$
+  }
+  
+  public void showWarning(String msg) {
+    new Erro(msg, this.janela,JOptionPane.WARNING_MESSAGE);  //$NON-NLS-1$
   }
   
   public Atributo newAtributo(String nome, String valor, String descricao) {

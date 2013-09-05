@@ -46,7 +46,9 @@ public class ModelsDataType implements ProcessDataType {
   }
 
   public String convertTo(Object value) {
-    return ((AbstractModelClass)value).getId() == null ? null : ((AbstractModelClass)value).getId().toString();
+    if(value!=null)
+      return ((AbstractModelClass)value).getId() == null ? null : ((AbstractModelClass)value).getId().toString();
+    return null;
   }
 
   public Object parse(String source) throws ParseException {
@@ -61,11 +63,12 @@ public class ModelsDataType implements ProcessDataType {
     return false;
   }
 
-  public void saveExternal(Object value) {
+  public String saveExternal(Object value) {
     //TODO Guardar nos metas e se o id for null actualizar
-    if(value == null) return;
+    if(value == null) return null;
     Integer id = ModelsManager.saveObj(value);
     if (((AbstractModelClass)value).getId() == null) ((AbstractModelClass)value).setId(id);
+    return id.toString();
   }
 
 }
