@@ -1773,7 +1773,7 @@ public class BlockFormulario extends Block implements FormOperations {
       TransformerException {
     String sLogin = userInfo.getUtilizador();
     String retObj = null;
-
+    System.out.println(xml.toString());
     Transformer transformer = XslTransformerFactory.getTransformer(userInfo, sXsl);
     if (noPrint && null == transformer) {
       Logger.debug(sLogin, "BlockFormulario", "transformForm", "Stylesheet not found. Trying flow stylesheet...");

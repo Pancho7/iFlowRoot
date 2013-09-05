@@ -564,6 +564,27 @@ label.subheader {
 		<script type="text/javascript">
 			window.addEvent('domready', getAppletElem);
 		</script>
+		<script type="text/javascript">
+            function presentModelProperties(object, model) {
+                var myStringArray = [];
+                var myTable = document.getElementById(object);
+                myStringArray = myTable.rows;
+                for (var i = 0; i &lt; myStringArray.length; i++) {
+                    if (myStringArray[i].attributes['name']) {
+                        if(myStringArray[i].attributes['name'].value == model)
+                        showRow(myStringArray[i].id);
+                        else
+                        hideRow(myStringArray[i].id)
+                    }
+                } 
+            }
+            function showRow(rowId) {
+                document.getElementById(rowId).style.display = "";
+            }
+            function hideRow(rowId) {
+                document.getElementById(rowId).style.display = "none";
+            }
+        </script>
 
         <xsl:text disable-output-escaping="yes">
 </xsl:text>
@@ -737,7 +758,7 @@ label.subheader {
     </div>
     <!--  TODO obter o primeiro tab filho e chamar-lhe o tabber -->
     <script language="JavaScript" type="text/javascript">
-      <!-- Configuracao da nova tab. Est· propositadamente mal identado para aparecer correctamente no HTML resultante. -->
+      <!-- Configuracao da nova tab. Est√° propositadamente mal identado para aparecer correctamente no HTML resultante. -->
       <xsl:text>
 	var tmpArray = new Array();
 </xsl:text>
@@ -1232,93 +1253,141 @@ label.subheader {
 		</xsl:attribute>
 
 	  <xsl:if test="type = 'object_model'">
-	      <label>
-	          <xsl:attribute name="class">
-	              <xsl:value-of select="name"/>
-	              <xsl:text> field</xsl:text>
+	      <table width="100%" border="0" align="center">
+	          <xsl:attribute name="id">
+	              <xsl:value-of select="variable/text()"/>
 	          </xsl:attribute>
-	      </label>
-	      <xsl:choose>  
-	          <xsl:when test="disabled='true'">
-	              <xsl:value-of select="value/text()"/>
-	          </xsl:when>
-	          <xsl:otherwise>
-	              <input type="text">
-	                  <xsl:attribute name="class">
-	                      <xsl:text>txt</xsl:text>
-	                      <xsl:if test="disabled='true'">
-	                          <xsl:text> readonly</xsl:text>			
-	                      </xsl:if>
-	                  </xsl:attribute>
-	                  <xsl:attribute name="id">
-	                      <xsl:value-of select="variable/text()"/>
-	                  </xsl:attribute>
-	                  <xsl:attribute name="name">
-	                      <xsl:value-of select="variable/text()"/>
-	                  </xsl:attribute>
-	                  <xsl:attribute name="value">
-	                      <xsl:value-of select="value/text()"/>
-	                  </xsl:attribute>
-	                  <xsl:attribute name="size">
-	                      <xsl:value-of select="size/text()"/>
-	                  </xsl:attribute>
-	                  <xsl:attribute name="maxlength">
-	                      <xsl:value-of select="maxlength/text()"/>
-	                  </xsl:attribute>
-	                  <xsl:if test="string-length(onchange) &gt; 0">
-	                      <xsl:attribute name="onchange">
-	                          <xsl:value-of select="onchange/text()"/>
+	          <tbody>
+	          <tr>
+	              <td>
+	                  <label>
+	                      <xsl:attribute name="class">
+	                          <xsl:value-of select="name"/>
+	                          <xsl:text> field</xsl:text>
 	                      </xsl:attribute>
-	                  </xsl:if>
-	                  <xsl:if test="string-length(onblur) &gt; 0">
-	                      <xsl:attribute name="onblur">
-	                          <xsl:value-of select="onblur/text()"/>
+	                      <xsl:apply-templates select="modellabel"/>
+	                  </label>
+	              </td>
+	          </tr>
+	          <tr>
+	              <td width="100%" valign="middle" align="left" class="normal_text">
+	                  <label>
+	                      <xsl:attribute name="class">
+	                          <xsl:value-of select="name"/>
+	                          <xsl:text> field</xsl:text>
 	                      </xsl:attribute>
-	                  </xsl:if>
-	                  <xsl:if test="string-length(onfocus) &gt; 0">
-	                      <xsl:attribute name="onfocus">
-	                          <xsl:value-of select="onfocus/text()"/>
+	                      <xsl:text>Modelo</xsl:text>
+	                  </label>
+	              </td>
+	              <td align="center" class="normal_text">
+	                  <select class="txt">
+	                      <xsl:attribute name="name">
+	                          <xsl:value-of select="variable/text()"/>
 	                      </xsl:attribute>
-	                  </xsl:if>
-	                  <xsl:attribute name="title">
-	                      <xsl:value-of select="tooltip/text()"/>
-	                  </xsl:attribute>
-	              </input>
-	          </xsl:otherwise>
-	      </xsl:choose>
-	      <xsl:value-of select="suffix/text()"/>
-	      <script type="text/javascript">
-	          <xsl:choose>
-	              <xsl:when test="datatype='pt.iknow.datatypes.Date'">
-	                  var fn<xsl:value-of select="variable/text()"/> = new LiveValidation('<xsl:value-of select="variable/text()"/>', { onValid: "", validMessage: "", insertAfterWhatNode: "label_<xsl:value-of select="variable/text()"/>" });
-	                  fn<xsl:value-of select="variable/text()"/>.add(Validate.Presence, { failureMessage: " " })
-	                  fn<xsl:value-of select="variable/text()"/>.add(Validate.Format, { pattern: /[0-3][0-9]\/[0-1][0-9]/i, failureMessage: "Formato Incorrecto!" } );
-	              </xsl:when>
-	              <xsl:when test="datatype='pt.iknow.datatypes.Text'">
-	                  <xsl:if test="obligatory='true'">
-	                      var fn<xsl:value-of select="variable/text()"/> = new LiveValidation('<xsl:value-of select="variable/text()"/>', { onValid: "", validMessage: " ", insertAfterWhatNode: "label_<xsl:value-of select="variable/text()"/>" });
-	                      fn<xsl:value-of select="variable/text()"/>.add(Validate.Presence, { failureMessage: " " })
-	                  </xsl:if>
-	              </xsl:when>
-	              <xsl:otherwise>
-	              </xsl:otherwise>
-	          </xsl:choose>
-	      </script>
-	      <!--
-	      <label>
-			<xsl:attribute name="class">
-				<xsl:value-of select="modellabel"/>
-				<xsl:text> field</xsl:text>
-				<xsl:if test="$multicol &gt; 1">
-					<xsl:text> multicol</xsl:text>
-				</xsl:if>
-			</xsl:attribute>
-			<xsl:for-each select="modelslist/model/modelfieldlist/modelfield">           
-			    <xsl:attribute name="name">
-			        <xsl:value-of select="value/text()"/>
-			    </xsl:attribute>
-            </xsl:for-each>
-        </label>-->
+                          <xsl:attribute name="onChange">
+                              <xsl:text>presentModelProperties('</xsl:text>
+                              <xsl:value-of select="variable/text()"/>
+                              <xsl:text>', this.value)</xsl:text>
+                          </xsl:attribute>
+	                      
+	                      <!-- TODO JM se for s√≥ um model nao por a combo box -->
+	                      <xsl:for-each select="models/modelname">
+	                          <option>
+	                              <xsl:attribute name="value">
+	                                  <xsl:value-of select="text()"/>
+	                              </xsl:attribute>
+	                              <xsl:if test="string-length(text())=0">
+	                                  <xsl:attribute name="selected">
+	                                      <xsl:text>selected</xsl:text>
+	                                  </xsl:attribute>
+	                              </xsl:if>
+	                              <xsl:value-of select="text()"/>
+	                          </option>
+	                      </xsl:for-each>
+	                  </select>
+	              </td>
+	          </tr>	              
+	          <xsl:for-each select="modelslist/model/modelfieldlist/modelfield">           
+               <tr>
+                   <xsl:attribute name="name">
+                       <xsl:value-of select="../../modelname/text()"/>
+                   </xsl:attribute>
+                   <xsl:attribute name="id">
+                       <xsl:value-of select="../../modelname/text()"/>
+                       <xsl:value-of select="name/text()"/>
+                   </xsl:attribute>
+                   <xsl:attribute name="style">
+                       <xsl:text>display: none</xsl:text>
+                   </xsl:attribute>
+                   <td width="100%" valign="middle" align="left" class="normal_text">
+                       <label>
+                           <xsl:attribute name="class">
+                               <xsl:value-of select="name"/>
+                               <xsl:text> field</xsl:text>
+                           </xsl:attribute>
+                           <xsl:value-of select="name"/>
+                       </label>
+                   </td>
+                   <td align="center" class="normal_text">
+                   <input type="text">
+                       <xsl:attribute name="class">
+                           <xsl:text>txt</xsl:text>
+                           <xsl:if test="disabled='true'">
+                               <xsl:text> readonly</xsl:text>			
+                           </xsl:if>
+                       </xsl:attribute>
+                       <xsl:attribute name="id">
+                           <xsl:value-of select="../../../../variable/text()"/>
+                           <xsl:text>.</xsl:text>
+                           <xsl:value-of select="name/text()"/>
+                       </xsl:attribute>
+                       <xsl:attribute name="name">
+                           <xsl:value-of select="../../../../variable/text()"/>
+                           <xsl:text>.</xsl:text>
+                           <xsl:value-of select="name/text()"/>
+                       </xsl:attribute>
+                       <xsl:attribute name="value">
+                           <xsl:value-of select="value/text()"/>
+                       </xsl:attribute>
+                       <xsl:attribute name="size">
+                           <xsl:value-of select="size/text()"/>
+                       </xsl:attribute>
+                       <xsl:attribute name="maxlength">
+                           <xsl:value-of select="maxlength/text()"/>
+                       </xsl:attribute>
+                     <xsl:attribute name="value">
+                       <xsl:value-of select="valor/text()"/>
+                     </xsl:attribute>
+                     <xsl:choose>
+                       <xsl:when test="editavel='true'">
+                       </xsl:when>
+                       <xsl:otherwise>
+                         <xsl:attribute name="disabled">
+                           <xsl:value-of select="true"/>	
+                         </xsl:attribute>
+                       </xsl:otherwise>
+                     </xsl:choose>
+                     <xsl:choose>
+                       <xsl:when test="obrigatorio='true'">
+                         <xsl:attribute name="required">
+                           <xsl:value-of select="true"/>	
+                         </xsl:attribute>
+                       </xsl:when>
+                       <xsl:otherwise>
+                       </xsl:otherwise>
+                     </xsl:choose>
+                     <!--<xsl:value-of s elect="valor/text()"/>-->
+                    </input>
+                   </td>
+                   
+                   
+               </tr>
+              
+              
+              </xsl:for-each>
+	          
+	          </tbody>
+	      </table>   
 	  </xsl:if>
       <xsl:if test="type = 'header'">
         <label>
@@ -1712,11 +1781,11 @@ label.subheader {
                 </xsl:if>
                 <td>
                  <xsl:if test="asSignatures='true'">
-					<img class="toolTipImg" id="lock_{id}" border="0" width="16" height="16" src="{$url_prefix}/images/lock.png" alt="Assinado" title="Este documento j· foi assinado">
+					<img class="toolTipImg" id="lock_{id}" border="0" width="16" height="16" src="{$url_prefix}/images/lock.png" alt="Assinado" title="Este documento j√° foi assinado">
 					</img>
 				 </xsl:if>
 				 <xsl:if test="asSignatures!='true'">
-					<img class="toolTipImg" id="lock_{id}" border="0" width="16" style="display:none" height="16" src="{$url_prefix}/images/lock.png" alt="Assinado" title="Este documento j· foi assinado">
+					<img class="toolTipImg" id="lock_{id}" border="0" width="16" style="display:none" height="16" src="{$url_prefix}/images/lock.png" alt="Assinado" title="Este documento j√° foi assinado">
 					</img>
 				 </xsl:if>
                </td>
@@ -2078,7 +2147,7 @@ label.subheader {
     !"#$%&amp;'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
   </xsl:variable>
   <xsl:variable name="latin1">
-    †°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ
+    ¬†¬°¬¢¬£¬§¬•¬¶¬ß¬®¬©¬™¬´¬¨¬≠¬Æ¬Ø¬∞¬±¬≤¬≥¬¥¬µ¬∂¬∑¬∏¬π¬∫¬ª¬º¬Ω¬æ¬ø√Ä√Å√Ç√É√Ñ√Ö√Ü√á√à√â√ä√ã√å√ç√é√è√ê√ë√í√ì√î√ï√ñ√ó√ò√ô√ö√õ√ú√ù√û√ü√†√°√¢√£√§√•√¶√ß√®√©√™√´√¨√≠√Æ√Ø√∞√±√≤√≥√¥√µ√∂√∑√∏√π√∫√ª√º√Ω√æ√ø
   </xsl:variable>
   <!-- Characters that usually don't need to be escaped -->
   <xsl:variable name="safe">!'()*-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~</xsl:variable>

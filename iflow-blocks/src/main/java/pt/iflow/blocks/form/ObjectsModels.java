@@ -80,7 +80,6 @@ public class ObjectsModels implements FieldInterface {
         if(!modelsLine[i].startsWith("//")){
            String[] lineSplit = modelsLine[i].split("\\.");
            if(lineSplit.length==2){
-             List<String> list = new ArrayList<String>();
              modelo = lineSplit[0].trim();
              props = lineSplit[1].trim();
              modelsRules.put(modelo, props);   
@@ -88,30 +87,28 @@ public class ObjectsModels implements FieldInterface {
         }
       }
       
-      //HashMap<String, Boolean> tagsValorRules = new HashMap<String, Boolean>();
-     
-      HashMap<String, HashMap<String, HashMap<String, Boolean>>> tagsModelRules = new HashMap<String, HashMap<String,HashMap<String,Boolean>>>();
+      HashMap<Integer, List<String>> tagsRules = new HashMap<Integer, List<String>>();
       
       String[] tagsLine = modelRulesTagArea.split("\n"); 
       for(int i= 0; i<tagsLine.length; i++){
         if(!tagsLine[i].startsWith("//")){
            String[] lineSplit = tagsLine[i].split("\\.");
            if(lineSplit.length==4){ 
-             HashMap<String, Boolean> tagsPropsRules = new HashMap<String, Boolean>();
-             HashMap<String, HashMap<String, Boolean>> tagsCampoRules = new HashMap<String, HashMap<String,Boolean>>();
+             List<String> listAux = new ArrayList<String>();
              modelo = lineSplit[0].trim();
              campo = lineSplit[1].trim();
              props = lineSplit[2].trim();
              valor = lineSplit[3].trim();
-             tagsPropsRules.put(props, Boolean.parseBoolean(valor));
-             tagsCampoRules.put(campo, tagsPropsRules);
-             tagsModelRules.put(modelo, tagsCampoRules);
+             listAux.add(modelo);
+             listAux.add(campo);
+             listAux.add(props);
+             listAux.add(valor);
+             tagsRules.put(i, listAux);
            }
         }
       }
       
       Object objModel = null;
-      //Object result=null;
       Object objId=null;
       
       if(pv!=null)
@@ -122,18 +119,31 @@ public class ObjectsModels implements FieldInterface {
         }
           
       
-      sb.append("<field><type>object_model</type>");
+      sb.append("<field>"); 
+      sb.append("<variable>").append(modelVarName).append("</variable>");
+      sb.append("<type>object_model</type>");
       sb.append("<modellabel>").append(modelLabel).append("</modellabel>");
       sb.append("<models>");
+      
+      
       String modelDataType = prop.getProperty("modelDataType");
+      
+      Boolean instanciado = false;
+      if(objId!=null){
+        if(!objId.equals("")){
+          instanciado=true;
+        }
+      }
       
       /*
       if(!objId.equals("")){
+        instanciado=true;
+        
         Object obj = ModelsManager.getObjInstance(Integer.parseInt(objId));
         try {
           result = (Object) obj.getClass().getMethod("get"+modelName.getValue()).invoke(obj);
         } catch (Exception e) {
-        } 
+        }
       } 
       */
       //TODO JM verifica se alem de ser abstract o id vem preenchido (se ja escolheu o fatura para o abstract)
@@ -142,7 +152,8 @@ public class ObjectsModels implements FieldInterface {
       
       List<String> modelsResList = new ArrayList<String>();
       if(modelDataType!=null){
-        if(modelDataType.equals("AbstractModel")){
+        if(modelDataType.equals("AbstractModel")&&!instanciado){
+          sb.append("<modelname></modelname>");
           HashMap<Integer, String> modelsList = ModelsManager.getAllModels();
           modelsResList = checkModelsRules(modelsList, modelsRules);
           Iterator<String> it1 = modelsResList.iterator();      
@@ -152,6 +163,7 @@ public class ObjectsModels implements FieldInterface {
           }
         }
         else{
+          sb.append("<modelname></modelname>");
           sb.append("<modelname>"+modelDataType+"</modelname>");
           modelsResList.add(modelDataType);
         }
@@ -163,11 +175,11 @@ public class ObjectsModels implements FieldInterface {
       sb.append("<modelslist>");
       
       if(modelsResList.size()>0){
-        sb.append(ModelXML(modelsResList,objId,objModel,tagsModelRules));
+        sb.append(ModelXML(modelsResList,objId,objModel,tagsRules));
       }
       sb.append("</modelslist>");
       sb.append("</field>");
-      System.out.println(sb.toString());
+      //System.out.println(sb.toString());
       return sb.toString();
     } catch (Exception e) {
       e.printStackTrace();
@@ -209,7 +221,7 @@ public class ObjectsModels implements FieldInterface {
     return listRes;
   }
 
-  private Object ModelXML(List<String> modelsList, Object objId, Object objModel, HashMap<String, HashMap<String, HashMap<String, Boolean>>> tagsModelRules) {
+  private Object ModelXML(List<String> modelsList, Object objId, Object objModel, HashMap<Integer, List<String>> tagsRules) {
     StringBuffer sb = new StringBuffer();
     Iterator<String> it = modelsList.iterator();
     String valor = "";
@@ -239,7 +251,7 @@ public class ObjectsModels implements FieldInterface {
         sb.append("<modelfieldlist>");
         for(int i = 0;i<fieldsList.length;i++)
         {
-          //if(checkVisible(model,(String)fieldsList[i],tagsModelRules)){
+          if(checkVisible(model,(String)fieldsList[i],tagsRules)){
             sb.append("<modelfield>");
             sb.append("<name>");
             sb.append((String)fieldsList[i]);
@@ -252,19 +264,19 @@ public class ObjectsModels implements FieldInterface {
             sb.append(valor);
             sb.append("</valor>");
             sb.append("<editavel>");
-            //if(checkEditavel(model,(String)fieldsList[i],tagsModelRules))
+            if(checkEditavel(model,(String)fieldsList[i],tagsRules))
               sb.append("true");
-            //else
-             // sb.append("false");
+            else
+              sb.append("false");
             sb.append("</editavel>");
             sb.append("<obrigatorio>");
-            //if(checkObrigatorio(model,(String)fieldsList[i],tagsModelRules))
+            if(checkObrigatorio(model,(String)fieldsList[i],tagsRules))
               sb.append("true");
-           // else
-            //  sb.append("false");
+            else
+              sb.append("false");
             sb.append("</obrigatorio>");
             sb.append("</modelfield>");
-          //}
+          }
         }
         sb.append("</modelfieldlist>");
         sb.append("</model>");
@@ -274,22 +286,52 @@ public class ObjectsModels implements FieldInterface {
 
   
 
-  private boolean checkObrigatorio(String model, String string,
-      HashMap<String, HashMap<String, HashMap<String, Boolean>>> tagsModelRules) {
-    // TODO Auto-generated method stub
-    return false;
+  private boolean checkObrigatorio(String model, String field, HashMap<Integer, List<String>> tagsRules) {
+    Boolean res = false;
+    Iterator<Entry<Integer, List<String>>> it = tagsRules.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry<Integer, List<String>> occur = (Map.Entry<Integer, List<String>>)it.next();
+        List<String> listAux = occur.getValue();
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("mandatory")&&listAux.get(3).equals("false"))
+          res = false;
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("mandatory")&&listAux.get(3).equals("true"))
+          res = true;
+    }        
+    return res;  
   }
 
-  private boolean checkEditavel(String model, String string,
-      HashMap<String, HashMap<String, HashMap<String, Boolean>>> tagsModelRules) {
-    // TODO Auto-generated method stub
-    return false;
+  private boolean checkEditavel(String model, String field, HashMap<Integer, List<String>> tagsRules) {
+    Boolean res = true;
+    Iterator<Entry<Integer, List<String>>> it = tagsRules.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry<Integer, List<String>> occur = (Map.Entry<Integer, List<String>>)it.next();
+        List<String> listAux = occur.getValue();
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("editable")&&listAux.get(3).equals("false"))
+          res = false;
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("editable")&&listAux.get(3).equals("true"))
+          res = true;
+    }        
+    return res;
   }
 
-  private boolean checkVisible(String model, String string,
-      HashMap<String, HashMap<String, HashMap<String, Boolean>>> tagsModelRules) {
-    // TODO Auto-generated method stub
-    return false;
+  private boolean checkVisible(String model, String field, HashMap<Integer, List<String>> tagsRules) {
+    Boolean res = true;
+    Iterator<Entry<Integer, List<String>>> it = tagsRules.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry<Integer, List<String>> occur = (Map.Entry<Integer, List<String>>)it.next();
+        List<String> listAux = occur.getValue();
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("visible")&&listAux.get(3).equals("false"))
+          res = false;
+        if((listAux.get(0).equals(model)||listAux.get(0).equals("*"))&&(listAux.get(1).equals(field)||listAux.get(1).equals("*"))
+            &&listAux.get(2).equals("visible")&&listAux.get(3).equals("true"))
+          res = true;
+    }        
+    return res;
   }
 
   public boolean isOutputField() {
