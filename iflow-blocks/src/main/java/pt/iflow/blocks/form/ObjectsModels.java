@@ -96,7 +96,7 @@ public class ObjectsModels implements FieldInterface {
       for(int i= 0; i<tagsLine.length; i++){
         if(!tagsLine[i].startsWith("//")){
            String[] lineSplit = tagsLine[i].split("\\.");
-           if(lineSplit.length==4){
+           if(lineSplit.length==4){ 
              HashMap<String, Boolean> tagsPropsRules = new HashMap<String, Boolean>();
              HashMap<String, HashMap<String, Boolean>> tagsCampoRules = new HashMap<String, HashMap<String,Boolean>>();
              modelo = lineSplit[0].trim();
