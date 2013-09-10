@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Stack;
 
@@ -1355,6 +1357,13 @@ public class BlockFormulario extends Block implements FormOperations {
             procData.getSignature() + "Forced text datatype for "
             + fi.getClass().getName() + " var " + varName);        
       }
+      else if (fi instanceof pt.iflow.blocks.form.ObjectsModels) {
+        datatypeName = pt.iflow.api.datatypes.ObjectModel.class.getName();    
+        props.setProperty(propName, datatypeName);
+        Logger.debug(userInfo.getUtilizador(),this,"getDataType",
+            procData.getSignature() + "Forced Object Model datatype for "
+            + fi.getClass().getName() + " var " + varName);        
+      }
     }
     
     if (StringUtils.isNotEmpty(datatypeName)) {
@@ -1767,13 +1776,14 @@ public class BlockFormulario extends Block implements FormOperations {
     }
     return disableField;
   }
-
+  
+  
   protected static String transformForm(final UserInfoInterface userInfo, final ProcessData procData, final String sXsl,
       final String xml, final boolean noPrint, final boolean useScanner, final ServletUtils response) throws IOException,
       TransformerException {
     String sLogin = userInfo.getUtilizador();
     String retObj = null;
-    System.out.println(xml.toString());
+    System.out.println("lalala"+xml.toString());
     Transformer transformer = XslTransformerFactory.getTransformer(userInfo, sXsl);
     if (noPrint && null == transformer) {
       Logger.debug(sLogin, "BlockFormulario", "transformForm", "Stylesheet not found. Trying flow stylesheet...");
@@ -2008,6 +2018,11 @@ public class BlockFormulario extends Block implements FormOperations {
 
         // first single props
         String varName = props.getProperty(FormProps.sVARIABLE);
+        
+        if(fi instanceof pt.iflow.blocks.form.ObjectsModels)
+          varName = props.getProperty(FormProps.sMODELSVARNAME);
+        
+        
         if (StringUtils.isNotEmpty(varName)) {
 
           if (FormUtils.checkOutputField(props)) {
@@ -2330,9 +2345,13 @@ public class BlockFormulario extends Block implements FormOperations {
             }
           }
         }
-
+            
         // now try single properties
         String varName = props.getProperty(FormProps.sVARIABLE);
+        
+        if(fi instanceof pt.iflow.blocks.form.ObjectsModels)
+          varName = props.getProperty(FormProps.sMODELSVARNAME);
+          
         if (StringUtils.isNotEmpty(varName)) {
 
           if (FormUtils.checkOutputField(props)) {
@@ -2486,7 +2505,7 @@ public class BlockFormulario extends Block implements FormOperations {
               alErrors.add(FormUtils.formatParsingError(props, varName, userInfo.getMessages().getString("Datatype.required_field")));
             }
           } else {
-
+             
             // DATATYPE
             DataTypeInterface dtiSimple = getDataType(userInfo, retObj, varName, props, fi);
             if (dtiSimple != null) {
@@ -2502,6 +2521,8 @@ public class BlockFormulario extends Block implements FormOperations {
               } 
 
             }
+            
+            
 
             logBuffer = new StringBuilder();
             String parseResult = null;
@@ -2514,6 +2535,7 @@ public class BlockFormulario extends Block implements FormOperations {
                 parseResult = dtiSimple.parseAndSetList(userInfo, retObj, idx, auxVName, 1, afdFormData, props, ignoreValidation, logBuffer);
               }else
                 parseResult = dtiSimple.parseAndSet(userInfo, retObj, varName, afdFormData, props, ignoreValidation, logBuffer);
+            //TODO JM neste break verifica se campo eh required e faz o set do value
             }
             else {
               Logger.debug(sLogin, this, "processForm", 

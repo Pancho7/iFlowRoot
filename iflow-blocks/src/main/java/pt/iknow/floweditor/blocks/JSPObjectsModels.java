@@ -44,11 +44,11 @@ public class JSPObjectsModels extends JSPFieldData {
 
    // add static/constant properties
    
-   DataTypeInterface dti = loadDataType(adapter, "pt.iflow.api.datatypes.Text");
+   DataTypeInterface dti = loadDataType(adapter, "pt.iflow.api.datatypes.ObjectModel");
    if(dti != null) {
      this.setStaticProperty(JSPFieldData.nPROP_DATA_TYPE, dti.getDescription());
    } else {
-     this.setStaticProperty(JSPFieldData.nPROP_DATA_TYPE, "Text");
+     this.setStaticProperty(JSPFieldData.nPROP_DATA_TYPE, "ObjectModel");
    }
 
    // add required properties

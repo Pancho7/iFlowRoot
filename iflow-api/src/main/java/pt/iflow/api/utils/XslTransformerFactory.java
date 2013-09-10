@@ -2,6 +2,7 @@ package pt.iflow.api.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Hashtable;
@@ -15,6 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import pt.iflow.api.core.BeanFactory;
@@ -61,6 +63,7 @@ public class XslTransformerFactory {
       Templates templates = null;
       Logger.debug("ADMIN", "XslTransformerFactory", "getTemplates", "Nao esta na cache. Processing...");
       isXslStream = repFile.getResourceAsStream();
+      
       if (isXslStream != null) {
         TransformerFactory tFactory = TransformerFactory.newInstance();
         tFactory.setURIResolver(new RepositoryURIResovler(userInfo, tFactory.getURIResolver()));

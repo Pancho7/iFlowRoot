@@ -292,14 +292,18 @@ li.field {
 	margin: 2px 0;
 	text-align: right;
 	clear: both;
-	min-height: 1em;
+	min-height: 1.3em;
 }
 
 li.field_multicol {
 	margin: 0 0 2px 0;
 	text-align: right;
 	clear: both;
-	min-height: 1em;
+	min-height: 1.3em;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-left: 5px;
+	margin-right:5px;
 }
 
 li.submit {
@@ -442,10 +446,84 @@ label.subheader {
 * html li.textbox { height: 20px; }
 * html li.password { height: 20px; }
 
-		</style>
+</style>
+<style type="text/css">
+
+/* ********************   ALTERACOES **************** */
+	html { 
+		overflow-y:hidden; 
+	}
+ 
+	table {
+		border-radius:5px;
+		border: solid 1px #d2d2d2;
+		padding: 1px;
+		/*border-spacing:10px;*/
+	}
+
+	table.arraytable td {
+		/*border: none;*/
+		padding:0 4px;
+		padding: 5px 4px;
+	}
+
+	table.arraytable td.table_sub_header {
+		padding: 2px 4px;
+		color: white;
+		font-size: 1.1em;
+	}
+
+	.table_main_header {
+		background-color: #666;
+		padding: 2px 4px;
+		font-size: 1.1em;
+	}
+
+	#main {
+		border-radius: 10px 10px 10px 10px;
+	}
+
+	li.subheader {
+		border-bottom: 1px solid #777;
+		border-right: 1px solid #777;
+		margin-top:20px;
+		border-radius:5px 5px 5px 5px;
+		padding-left: 10px;
+	}
+
+	li.header {
+		border-bottom: 1px solid #5577bb;
+		border-right: 1px solid #5577bb;
+		padding: 5px 5px 2px 20px;
+		border-radius:5px 5px 5px 5px;
+		font-size: 1.2em;
+		margin-bottom:20px;
+	}
+
+</style>
 <script src="/iFlow//javascript/yahoo/yahoo-dom-event/yahoo-dom-event.js" type="text/javascript"></script><script src="/iFlow//javascript/yahoo/dragdrop/dragdrop-min.js" type="text/javascript"></script><script src="/iFlow//javascript/yahoo/container/container-min.js" type="text/javascript"></script><script src="/iFlow//javascript/ajax_processing.js" type="text/javascript"></script><script src="/iFlow//javascript/tabs.js" type="text/javascript"></script><script src="/iFlow//javascript/iflow_main.js" type="text/javascript"></script><script src="/iFlow//javascript/calendar/calendar.js" type="text/javascript"></script><script src="/iFlow//javascript/calendar/lang/calendar-en.js" type="text/javascript"></script><script src="/iFlow//javascript/calendar/calendar-setup.js" type="text/javascript"></script><script src="/iFlow//javascript/mootools.js" type="text/javascript"></script><script src="/iFlow//javascript/FormFunctions.js" type="text/javascript"></script><script src="/iFlow//javascript/Stickman.MultiUpload.js" type="text/javascript"></script><script src="/iFlow//javascript/livevalidation_standalone.js" type="text/javascript"></script><script src="/iFlow//Themes/default/javascript/theme.js" type="text/javascript"></script><script src="/iFlow//javascript/applet_functions.js" type="text/javascript"></script><script type="text/javascript">
 			window.addEvent('domready', getAppletElem);
-		</script>
+		</script><script type="text/javascript">
+            function presentModelProperties(object, model) {
+                var myStringArray = [];
+                var myTable = document.getElementById(object);
+                myStringArray = myTable.rows;
+                for (var i = 0; i < myStringArray.length; i++) {
+                    if (myStringArray[i].attributes['name']) {
+                        if(myStringArray[i].attributes['name'].value == model)
+                        showRow(myStringArray[i].id);
+                        else
+                        hideRow(myStringArray[i].id)
+                    }
+                } 
+            }
+            function showRow(rowId) {
+                document.getElementById(rowId).style.display = "";
+            }
+            function hideRow(rowId) {
+                document.getElementById(rowId).style.display = "none";
+            }
+        </script>
 </head>
 <body onload="initProcFrame();">
 <div style="margin:auto;">
@@ -466,13 +544,32 @@ label.subheader {
 <div class="blockdivision">
 <div class="columndivision">
 <ol class="fieldlist">
+<li class="object_model  field">
+<table align="center" border="0" width="100%" id="jm">
+<tr>
+<td align="center"><label class=" field">aa</label></td>
+</tr>
+<tr>
+<td class="normal_text" align="left" valign="middle" width="100%"><label class=" field">Modelo</label></td><td class="normal_text" align="center"><select class="txt" name="jm" onChange="presentModelProperties('jm', this.value)"><option value="" selected></option><option value="fatura">fatura</option></select></td>
+</tr>
+<tr name="fatura" id="faturaAutor" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Autor field">Autor<em>*</em></label></td><td class="normal_text" align="center"><input type="text" class="txt" id="jm.Autor" name="jm.Autor" value="gggg" size="" maxlength=""></td>
+</tr>
+<tr name="fatura" id="faturaCriador" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Criador field">Criador</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="jm.Criador" name="jm.Criador" value="Tony" size="" maxlength=""></td>
+</tr>
+<tr name="fatura" id="faturaTamanho" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Tamanho field">Tamanho</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="jm.Tamanho" name="jm.Tamanho" value="250" size="" maxlength="" disabled></td>
+</tr>
+<script type="text/javascript"></script>
+</table>
+</li>
 <li class="header  field">
-<label class="header field">Falhou</label>
+<label class="header field">s</label>
 </li>
 <li class="textbox  field">
-<label class="textbox field" id="label_data1" for="data1">dt</label><input type="text" class="txt" id="data1" name="data1" value="2013-09-08 16:54" size="20" maxlength="20" title=""><script type="text/javascript"></script>
+<label class="textbox field" id="label_aaab" for="aaab">nova<em>*</em></label><input type="text" class="txt" id="aaab" name="aaab" value="s" size="12" maxlength="12" title=""><script type="text/javascript"></script>
 </li>
-<li class="object_model  field"></li>
 </ol>
 </div>
 </div>
@@ -480,6 +577,8 @@ label.subheader {
 <div class="columndivision columnholder">
 <div class="submit">&nbsp;
 		<button type="submit" class="button" valign="center" align="center" name="_avancar" value="4" onClick="if (CheckEmptyFields()) { disableForm(); document.dados.op.value='3'; document.getElementById('_button_clicked_id').value='4'; } else { return false; }" title="Forward">Forward</button>&nbsp;
+		&nbsp;
+		<button type="submit" class="button" valign="center" align="center" name="_guardar" value="5" onClick="disableForm(); document.dados.op.value=2;" title="Save">Save</button>&nbsp;
 		</div>
 </div>
 </div>
@@ -493,5 +592,8 @@ label.subheader {
 <img src="/iFlow//images/loading.gif"></div>
 </div>
 </div>
+<script type="text/javascript">
+				window.parent.onresize = function(event) {initProcFrame();};
+		</script>
 </body>
 </html>

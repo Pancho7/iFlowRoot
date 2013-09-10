@@ -1257,7 +1257,7 @@ label.subheader {
 	          <xsl:attribute name="id">
 	              <xsl:value-of select="variable/text()"/>
 	          </xsl:attribute>
-	          <tbody>
+	          <!--<tbody>-->
 	          <tr>
 	              <td>
 	                  <label>
@@ -1386,7 +1386,7 @@ label.subheader {
               
               </xsl:for-each>
 	          
-	          </tbody>
+	          <!--</tbody>-->
 	      </table>   
 	  </xsl:if>
       <xsl:if test="type = 'header'">

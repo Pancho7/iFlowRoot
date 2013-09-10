@@ -135,21 +135,6 @@ public class ObjectsModels implements FieldInterface {
         }
       }
       
-      /*
-      if(!objId.equals("")){
-        instanciado=true;
-        
-        Object obj = ModelsManager.getObjInstance(Integer.parseInt(objId));
-        try {
-          result = (Object) obj.getClass().getMethod("get"+modelName.getValue()).invoke(obj);
-        } catch (Exception e) {
-        }
-      } 
-      */
-      //TODO JM verifica se alem de ser abstract o id vem preenchido (se ja escolheu o fatura para o abstract)
-      // verificar se no value já vem algum modelo selecionado e ele agora esta a selecionar um outro diferente.
-      
-      
       List<String> modelsResList = new ArrayList<String>();
       if(modelDataType!=null){
         if(modelDataType.equals("AbstractModel")&&!instanciado){

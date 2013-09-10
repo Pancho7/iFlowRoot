@@ -2,10 +2,6 @@ package pt.iflow.api.processdata;
 
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,8 +26,6 @@ import pt.iflow.api.core.ProcessCatalogue;
 import pt.iflow.api.core.Repository;
 import pt.iflow.api.documents.DocumentData;
 import pt.iflow.api.documents.Documents;
-import pt.iflow.api.models.ModelsManager;
-import pt.iflow.api.models.Reloader;
 import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.processtype.TextDataType;
@@ -47,7 +41,6 @@ import pt.iknow.utils.DataSet;
 import pt.iknow.utils.DataSetImpl;
 import bsh.EvalError;
 import bsh.Interpreter;
-import bsh.NameSpace;
 
 public class ProcessData {
 

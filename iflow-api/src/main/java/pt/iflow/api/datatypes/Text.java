@@ -1,7 +1,9 @@
 package pt.iflow.api.datatypes;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -142,6 +144,7 @@ public class Text implements DataTypeInterface {
   public String parseAndSet(UserInfoInterface userInfo, 
       ProcessData procData, String name, FormData formData, Properties props, boolean ignoreValidation, StringBuilder logBuffer) {
     String value = parseValue(name, formData);
+    
     if (!ignoreValidation && 
         FormUtils.checkRequiredField(userInfo, procData, props) &&
         value == null) {
