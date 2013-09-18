@@ -1,8 +1,9 @@
 package pt.iflow.blocks.form;
 
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,16 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
-
-import pt.iflow.api.blocks.FormProps;
 import pt.iflow.api.models.ModelsManager;
 import pt.iflow.api.processdata.ProcessData;
 import pt.iflow.api.processdata.ProcessSimpleVariable;
-import pt.iflow.api.processdata.ProcessVariable;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.utils.ServletUtils;
 import pt.iflow.api.utils.UserInfoInterface;
-import pt.iknow.floweditor.blocks.JSPFieldData;
 
 public class ObjectsModels implements FieldInterface {
 
@@ -117,14 +114,12 @@ public class ObjectsModels implements FieldInterface {
           if(pv.getRawValue()!=null)
             objId = pv.getRawValue();
         }
-          
       
       sb.append("<field>"); 
       sb.append("<variable>").append(modelVarName).append("</variable>");
       sb.append("<type>object_model</type>");
       sb.append("<modellabel>").append(modelLabel).append("</modellabel>");
       sb.append("<models>");
-      
       
       String modelDataType = prop.getProperty("modelDataType");
       
@@ -154,11 +149,7 @@ public class ObjectsModels implements FieldInterface {
         }
       }
       sb.append("</models>");    
-      
-      
-      
       sb.append("<modelslist>");
-      
       if(modelsResList.size()>0){
         sb.append(ModelXML(modelsResList,objId,objModel,tagsRules));
       }
@@ -210,14 +201,12 @@ public class ObjectsModels implements FieldInterface {
     StringBuffer sb = new StringBuffer();
     Iterator<String> it = modelsList.iterator();
     String valor = "";
+    String tipo = "";
     Object result=null;
-    //AbstractModelClass absModel = (AbstractModelClass)objId;
     while (it.hasNext()) {
         String model = it.next();
         Object[] fieldsList = ModelsManager.listTags(model);
-        
         if(objModel!=null){
-          //Object obj = ModelsManager.getObjInstance(absModel.getId());
           try {
             result = (Object) objModel.getClass().getMethod("get"+model).invoke(objModel);
           } catch (Exception e) {
@@ -236,6 +225,15 @@ public class ObjectsModels implements FieldInterface {
         sb.append("<modelfieldlist>");
         for(int i = 0;i<fieldsList.length;i++)
         {
+          Class<?> myClazz = ModelsDataType.getSupportingClassForModel(model);
+          Object objM = objModel;
+          if (objModel==null || !myClazz.getName().equals(objModel.getClass().getName())) {
+            try {
+              objM = myClazz.newInstance();
+            } catch (Exception e) {
+            } 
+          }
+          
           if(checkVisible(model,(String)fieldsList[i],tagsRules)){
             sb.append("<modelfield>");
             sb.append("<name>");
@@ -243,11 +241,22 @@ public class ObjectsModels implements FieldInterface {
             sb.append("</name>");
             sb.append("<valor>");
             try {
-              valor = ((Object) objModel.getClass().getMethod("get"+fieldsList[i]).invoke(objModel)).toString();
+              tipo = objM.getClass().getMethod("get"+fieldsList[i]).getReturnType().getName();
+              valor = ((Object) objM.getClass().getMethod("get"+fieldsList[i]).invoke(objM)).toString();
+              if(tipo.equals("java.util.Date")){
+                SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss zzz yyyy");
+                Date date = formatter.parse(valor);
+                formatter = new SimpleDateFormat("yyyy/MM/dd");
+                valor = formatter.format(date);
+              }    
             } catch (Exception e) {
+              //System.err.println(e.toString());
             } 
             sb.append(valor);
             sb.append("</valor>");
+            sb.append("<tipo>");
+            sb.append(tipo);
+            sb.append("</tipo>");
             sb.append("<editavel>");
             if(checkEditavel(model,(String)fieldsList[i],tagsRules))
               sb.append("true");
@@ -336,7 +345,7 @@ public class ObjectsModels implements FieldInterface {
       props.setProperty("modelDataType", pv.getType().toString());
     }
   }
-
+/*
   private String replaceLeftBar(String textAreaValue) {
     StringBuffer result = new StringBuffer();
     if(textAreaValue != null && textAreaValue.length() > 0){
@@ -345,5 +354,5 @@ public class ObjectsModels implements FieldInterface {
       return "";
     }
     return result.toString();
-  }
+  }*/
 }

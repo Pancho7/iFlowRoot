@@ -565,6 +565,10 @@ label.subheader {
 			window.addEvent('domready', getAppletElem);
 		</script>
 		<script type="text/javascript">
+      		  function getModelsDate(dateValue){
+      		  	alert(dateValue.toString('yyyy/MM/dd'));
+      		    return dateValue.toString('yyyy/MM/dd');
+      		  }
             function presentModelProperties(object, model) {
                 var myStringArray = [];
                 var myTable = document.getElementById(object);
@@ -1332,47 +1336,105 @@ label.subheader {
                        </label>
                    </td>
                    <td align="center" class="normal_text">
-                   <input type="text">
-                       <xsl:attribute name="class">
-                           <xsl:text>txt</xsl:text>
-                           <xsl:if test="disabled='true'">
-                               <xsl:text> readonly</xsl:text>			
-                           </xsl:if>
-                       </xsl:attribute>
-                       <xsl:attribute name="id">
-                           <xsl:value-of select="../../../../variable/text()"/>
-                           <xsl:text>.</xsl:text>
-                           <xsl:value-of select="name/text()"/>
-                       </xsl:attribute>
-                       <xsl:attribute name="name">
-                           <xsl:value-of select="../../../../variable/text()"/>
-                           <xsl:text>.</xsl:text>
-                           <xsl:value-of select="name/text()"/>
-                       </xsl:attribute>
-                       <xsl:attribute name="value">
-                           <xsl:value-of select="value/text()"/>
-                       </xsl:attribute>
-                       <xsl:attribute name="size">
-                           <xsl:value-of select="size/text()"/>
-                       </xsl:attribute>
-                       <xsl:attribute name="maxlength">
-                           <xsl:value-of select="maxlength/text()"/>
-                       </xsl:attribute>
-                     <xsl:attribute name="value">
-                       <xsl:value-of select="valor/text()"/>
-                     </xsl:attribute>
                      <xsl:choose>
-                       <xsl:when test="editavel='true'">
+                       <xsl:when test="tipo='java.util.Date'">
+                         <input type="text" size="12">
+                           <xsl:attribute name="class">
+                             <xsl:text>txt</xsl:text>
+                             <xsl:if test="disabled='true'">
+                               <xsl:text> readonly</xsl:text>
+                             </xsl:if>
+                           </xsl:attribute>
+                           <xsl:attribute name="id">
+                             <xsl:value-of select="../../../../variable/text()"/>
+                             <xsl:text>.</xsl:text>
+                             <xsl:value-of select="name/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="name">
+                             <xsl:value-of select="../../../../variable/text()"/>
+                             <xsl:text>.</xsl:text>
+                             <xsl:value-of select="name/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="value">
+                             <xsl:value-of select="valor/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="size">
+                             <xsl:value-of select="size/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="maxlength">
+                             <xsl:value-of select="maxlength/text()"/>
+                           </xsl:attribute>
+                           <xsl:choose>
+                             <xsl:when test="editavel='true'">
+                             </xsl:when>
+                             <xsl:otherwise>
+                               <xsl:attribute name="disabled">
+                                 <xsl:value-of select="true"/>	
+                               </xsl:attribute>
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           <xsl:attribute name="onmouseover">
+                             <xsl:text>caltasks(this.id, '%Y/%m/%d');this.onmouseover=null;</xsl:text>
+                           </xsl:attribute>
+                           <xsl:if test="string-length(onchange_submit) &gt; 0">
+                             <xsl:attribute name="onChange">
+                               <xsl:apply-templates select="onchange_submit"/>
+                             </xsl:attribute>
+                           </xsl:if>
+                         </input>
+                         <img border="0" src="{$url_prefix}/images/icon_delete.png">
+                           <xsl:attribute name="onclick">
+                             <xsl:text>javascript:document.getElementById('</xsl:text>
+                             <xsl:value-of select="../../../../variable/text()"/>
+                             <xsl:text>.</xsl:text>
+                             <xsl:value-of select="name/text()"/>
+                             <xsl:text>').value=''</xsl:text>
+                           </xsl:attribute>
+                         </img>
                        </xsl:when>
                        <xsl:otherwise>
-                         <xsl:attribute name="disabled">
-                           <xsl:value-of select="true"/>	
-                         </xsl:attribute>
+                         <input type="text">
+                           <xsl:attribute name="class">
+                             <xsl:text>txt</xsl:text>
+                             <xsl:if test="disabled='true'">
+                               <xsl:text> readonly</xsl:text>			
+                             </xsl:if>
+                           </xsl:attribute>
+                           <xsl:attribute name="id">
+                             <xsl:value-of select="../../../../variable/text()"/>
+                             <xsl:text>.</xsl:text>
+                             <xsl:value-of select="name/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="name">
+                             <xsl:value-of select="../../../../variable/text()"/>
+                             <xsl:text>.</xsl:text>
+                             <xsl:value-of select="name/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="value">
+                             <xsl:value-of select="value/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="size">
+                             <xsl:value-of select="size/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="maxlength">
+                             <xsl:value-of select="maxlength/text()"/>
+                           </xsl:attribute>
+                           <xsl:attribute name="value">
+                             <xsl:value-of select="valor/text()"/>
+                           </xsl:attribute>
+                           <xsl:choose>
+                             <xsl:when test="editavel='true'">
+                             </xsl:when>
+                             <xsl:otherwise>
+                               <xsl:attribute name="disabled">
+                                 <xsl:value-of select="true"/>	
+                               </xsl:attribute>
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           <!--<xsl:value-of select="valor/text()"/>-->
+                         </input>
                        </xsl:otherwise>
-                     </xsl:choose>
-                     <!--<xsl:value-of select="valor/text()"/>-->
-                    </input>
-                     
+                     </xsl:choose>                     
                    </td>    
                </tr>
               </xsl:for-each>

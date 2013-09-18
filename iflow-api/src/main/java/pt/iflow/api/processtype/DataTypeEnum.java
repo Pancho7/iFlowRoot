@@ -140,7 +140,6 @@ public enum DataTypeEnum {
   private static enum Features {
     Single(true,false),
     List(false,true),
-    @SuppressWarnings("unused")
     Mixed(true,true);
 
     private final boolean isSingle;

@@ -3202,17 +3202,39 @@ public class JSPFieldData {
     List<String> list = new ArrayList<String>();
     for (int i = 0; i < catalogue.length; i++){
       Atributo atr = ((Atributo) catalogue[i]);
-      try{
-        if(!DataTypeEnum.isEnumDataType(atr.getDataType())||DataTypeEnum.valueOf(atr.getDataType()).isAbstractModel())
-          list.add(((Atributo) catalogue[i]).getNome());
+      /*
+      Boolean notEnum = false;
+      Boolean isAbstract = true;
+      Boolean notList = false;
+      try{  
+        notEnum = !DataTypeEnum.isEnumDataType(atr.getDataType());
+        if(!notEnum){
+          isAbstract = DataTypeEnum.valueOf(atr.getDataType()).isAbstractModel();
+          notList = !DataTypeEnum.valueOf(atr.getDataType()).isList();
+        }
       }catch(Exception e){
+        System.err.println(e.toString());
+      }
+      if((notEnum||isAbstract)&& notList) 
+        list.add(((Atributo) catalogue[i]).getNome());
+      */
+      //TODO JM Ver caso em que o nome da variavel tem array mas nao eh array
+      Boolean notEnum = !DataTypeEnum.isEnumDataType(atr.getDataType());
+      if((!atr.getDataType().endsWith("Array")&& notEnum)){
+        list.add(((Atributo) catalogue[i]).getNome());
+      }
+      if(!notEnum){
+        Boolean isAbstract = DataTypeEnum.valueOf(atr.getDataType()).isAbstractModel();
+        if((!atr.getDataType().endsWith("Array")&& isAbstract)){
+          list.add(((Atributo) catalogue[i]).getNome());
+        }
       }
     }
     String[] ret = new String[list.size()];
     Iterator<String> it = list.iterator();
-    int i = 0;
+    int f = 0;
     while(it.hasNext()){
-      ret[i++] = it.next();
+      ret[f++] = it.next();
     }
     return ret;
   }

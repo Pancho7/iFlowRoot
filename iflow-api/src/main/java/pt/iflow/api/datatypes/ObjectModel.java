@@ -1,6 +1,9 @@
 package pt.iflow.api.datatypes;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +20,7 @@ import pt.iflow.api.blocks.FormUtils;
 import pt.iflow.api.datatypes.msg.Messages;
 import pt.iflow.api.processdata.ProcessData;
 import pt.iflow.api.processdata.ProcessListVariable;
+import pt.iflow.api.processdata.ProcessSimpleVariable;
 import pt.iflow.api.processdata.ProcessVariableValue;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.utils.Logger;
@@ -184,13 +188,16 @@ public class ObjectModel implements DataTypeInterface {
     ProcessDataType varType = procData.getVariableDataType(name);
     Class<?> varClass = varType.getSupportingClass();
     
-    Object obj=null;
+    Object obj = null;
     
+    ProcessSimpleVariable pVar = procData.get(name); 
     try {
-      obj = varClass.newInstance();
+      obj = pVar.getValue();
+      if (obj ==null) 
+        obj = varClass.newInstance();
     } catch (Exception e) {
       
-    } 
+    }
     HashMap<String, String> modelValues = new HashMap<String, String>();
     
     Map<String, String[]> aux = formData.getParameters();
@@ -207,13 +214,14 @@ public class ObjectModel implements DataTypeInterface {
             Class<?> clz = obj.getClass().getMethod(metodoGet).getReturnType();
             if(clz==java.lang.Integer.class){
               java.lang.Integer intVal = java.lang.Integer.parseInt(auxStr);
-              varClass.getMethod(metodoSet, clz).invoke(obj, intVal);
+              obj.getClass().getMethod(metodoSet, clz).invoke(obj, intVal);
             }else if(clz==java.util.Date.class){
+              java.util.Date dt = parseValue(auxStr);
               //TODO JM Falta tratar os casos das datas
-              java.util.Date d = new java.util.Date();
-              varClass.getMethod(metodoSet, clz).invoke(obj, d);
+              //java.util.Date d = new java.util.Date();
+              obj.getClass().getMethod(metodoSet, clz).invoke(obj, dt);
             }else{
-              varClass.getMethod(metodoSet, clz).invoke(obj, auxStr);
+              obj.getClass().getMethod(metodoSet, clz).invoke(obj, auxStr);
             }
           } catch (Exception e) {
             e.printStackTrace();
@@ -222,7 +230,7 @@ public class ObjectModel implements DataTypeInterface {
             return userInfo.getMessages().getString("Datatype.required_field");
           }
         }        
-    }
+    }   
 
     DataTypeUtils.setObject(userInfo, procData, name, obj, null);
     logBuffer.append("Set '" + name + "' with '" + value + "';");
@@ -245,6 +253,15 @@ public class ObjectModel implements DataTypeInterface {
           res = true;
     }        
     return res;  
+  }
+  
+  private java.util.Date parseValue(String valueData) throws ParseException {
+    DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+    java.util.Date value = null;
+      if (StringUtils.isNotEmpty(valueData)) {
+        value = df.parse(valueData);
+      }
+    return value;
   }
 
   public String parseAndSetList(UserInfoInterface userInfo, 
