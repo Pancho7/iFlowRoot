@@ -253,6 +253,7 @@ public class ObjectsModels implements FieldInterface {
               //System.err.println(e.toString());
             } 
             sb.append(valor);
+            valor="";
             sb.append("</valor>");
             sb.append("<tipo>");
             sb.append(tipo);

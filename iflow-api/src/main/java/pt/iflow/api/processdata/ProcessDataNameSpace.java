@@ -260,15 +260,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
     Object obj = null;
     Class<?> clazz = null;
 
-    //TODO JM to clean
-    /*
-    HashMap<Integer, String> map = ModelsManager.getAllModels();
-    List<String> list1 = ModelsManager.getAllTagsFromModel(3);
-    List<String> list2 = ModelsManager.getAllModelsFromTag(1);
-    */
-    if(name.equals("_jma")||name.equals("_jm"))
-      System.out.println("lalala");
-    
+       
     ProcessVariableValue processVar = process.get(varname);
     ProcessDataType dataType = process.getVariableDataType(varname);
 
@@ -276,8 +268,6 @@ public class ProcessDataNameSpace extends BshNameSpace {
       clazz = dataType.getSupportingClass();
       obj = processVar.getValue();
       if (dataType instanceof ModelsDataType/*&& obj!=null*/) {
-        //obj = ModelsManager.getObjInstance((Integer)obj);
-        //obj = ModelsManager.getObjInstance((Integer)1);
         try {
           obj = getModelObject((AbstractModelClass)obj, clazz);
         } catch (Exception e) {

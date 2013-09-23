@@ -84,7 +84,7 @@ public class ModelsManager {
       
      //TODO JM preencher docModel e path
       
-     ((AbstractModelClass)value).setPath("c:\\");
+     ((AbstractModelClass)value).setPath("");
      //((AbstractModelClass)value).setId(6);
       
      id = objAcc.saveObjects((AbstractModelClass)value);
@@ -147,13 +147,20 @@ public class ModelsManager {
   public static Object[] listTags(String modelName) {
     int i = 0;
     String[] tagsArray =null;
+    List<String> tagNameList=null;
     try {
-      List<String> tagNameList = modelsAcc.GETAllTagNameByModelName(modelName);
-      tagsArray = new String[tagNameList.size()];
-      Iterator<String> it = tagNameList.iterator();
-      while (it.hasNext())
-      {
-        tagsArray[i++] = it.next();
+      if(modelName.equals("*")){
+        tagNameList = new ArrayList<String>();
+        tagNameList.add(modelName);
+      }
+      else{
+        tagNameList = modelsAcc.GETAllTagNameByModelName(modelName);
+        tagsArray = new String[tagNameList.size()];
+        Iterator<String> it = tagNameList.iterator();
+        while (it.hasNext())
+        {
+          tagsArray[i++] = it.next();
+        }
       }
     } catch (Exception e) {
       System.err.println(e.toString());

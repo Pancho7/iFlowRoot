@@ -1,6 +1,5 @@
 package pt.iflow.api.datatypes;
 
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -213,14 +212,24 @@ public class ObjectModel implements DataTypeInterface {
           try {
             Class<?> clz = obj.getClass().getMethod(metodoGet).getReturnType();
             if(clz==java.lang.Integer.class){
-              java.lang.Integer intVal = java.lang.Integer.parseInt(auxStr);
-              obj.getClass().getMethod(metodoSet, clz).invoke(obj, intVal);
-            }else if(clz==java.util.Date.class){
-              java.util.Date dt = parseValue(auxStr);
-              //TODO JM Falta tratar os casos das datas
-              //java.util.Date d = new java.util.Date();
-              obj.getClass().getMethod(metodoSet, clz).invoke(obj, dt);
-            }else{
+              if(!auxStr.equals("")){
+                java.lang.Integer intVal = java.lang.Integer.parseInt(auxStr);
+                obj.getClass().getMethod(metodoSet, clz).invoke(obj, intVal);
+              }
+            }
+            else if(clz==java.util.Date.class){
+              if(!auxStr.equals("")){
+                java.util.Date dt = parseValue(auxStr);
+                obj.getClass().getMethod(metodoSet, clz).invoke(obj, dt);
+              }
+            }
+            else if(clz==java.lang.Double.class){
+              if(!auxStr.equals("")){
+                java.lang.Double dv = java.lang.Double.parseDouble(auxStr);
+                obj.getClass().getMethod(metodoSet, clz).invoke(obj, dv);
+              }
+            }
+            else{
               obj.getClass().getMethod(metodoSet, clz).invoke(obj, auxStr);
             }
           } catch (Exception e) {
