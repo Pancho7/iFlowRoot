@@ -408,6 +408,8 @@ public class Const {
   
   private static List<String> ALLOWED_LOCALES = new ArrayList<String>();
 
+  public static String META_TAGGING_URL = "";
+  
   static {
     ALLOWED_LOCALES.add(sDEFAULT_LOCALE_PT_PT);
     ALLOWED_LOCALES.add(sDEFAULT_LOCALE_EN_US);
@@ -586,6 +588,11 @@ public class Const {
     stmp = Setup.getProperty("DEFAULT_LOCALE");
     if (stmp != null && ALLOWED_LOCALES.contains(stmp)) {
       Const.DEFAULT_LOCALE = stmp;
+    }
+    
+    stmp = Setup.getProperty("META_TAGGING_URL");
+    if (stmp != null) {
+      Const.META_TAGGING_URL = stmp;
     }
     
     // click timeout stuff

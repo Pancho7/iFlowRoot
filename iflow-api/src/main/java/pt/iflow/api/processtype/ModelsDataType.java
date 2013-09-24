@@ -3,7 +3,7 @@ package pt.iflow.api.processtype;
 import java.text.ParseException;
 import java.util.HashMap;
 
-import model.AbstractModelClass;
+import modelsClasses.AbstractModel;
 
 import pt.iflow.api.models.ModelsManager;
 import pt.iflow.api.models.Reloader;
@@ -34,6 +34,12 @@ public class ModelsDataType implements ProcessDataType {
 	public static Class<?> getSupportingClassForModel(String modelName) {
 	    Class<?> c = new Reloader().loadClass(Const.MODELS_PATH+"modelsClasses."+modelName);
 	    loadedClasses.put(modelName, c);
+	    try {
+          Class<?> sc = c.getSuperclass();
+          String scName = sc.getSimpleName();
+          if (!loadedClasses.containsKey(scName))
+            loadedClasses.put(scName, sc);
+	    } catch (Exception e) { }
 	    return loadedClasses.get(modelName);
 	}
 
@@ -47,7 +53,7 @@ public class ModelsDataType implements ProcessDataType {
 
   public String convertTo(Object value) {
     if(value!=null)
-      return ((AbstractModelClass)value).getId() == null ? null : ((AbstractModelClass)value).getId().toString();
+      return ((AbstractModel)value).getId() == null ? null : ((AbstractModel)value).getId().toString();
     return null;
   }
 
@@ -67,7 +73,7 @@ public class ModelsDataType implements ProcessDataType {
     //TODO Guardar nos metas e se o id for null actualizar
     if(value == null) return null;
     Integer id = ModelsManager.saveObj(value);
-    if (((AbstractModelClass)value).getId() == null) ((AbstractModelClass)value).setId(id);
+    if (((AbstractModel)value).getId() == null) ((AbstractModel)value).setId(id);
     return id.toString();
   }
 

@@ -1005,9 +1005,13 @@ public class ProcessData {
     File[] listOfFiles = folder.listFiles();
     for (int i = 0; i < listOfFiles.length; i++) {
       String clazzName = listOfFiles[i].getName();
-      Class<?> myClazz = ModelsDataType.getSupportingClassForModel(clazzName.replace(".class", ""));
-      bsh.getClassManager().cacheClassInfo("modelsClasses."+clazzName.replace(".class", ""), myClazz);
-    
+      try {
+        Class<?> myClazz = ModelsDataType.getSupportingClassForModel(clazzName.replace(".class", ""));
+        bsh.getClassManager().cacheClassInfo("modelsClasses."+clazzName.replace(".class", ""), myClazz);
+      } catch (Exception e) {
+        Logger.error(userInfo.getUtilizador(), this, "internalGetInterpreter", 
+            this.getSignature() + "unable to load class " + clazzName, e);
+      } 
     }
     
         

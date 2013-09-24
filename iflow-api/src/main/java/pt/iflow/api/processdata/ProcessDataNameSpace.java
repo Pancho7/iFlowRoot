@@ -10,13 +10,14 @@ import java.util.Map;
 
 
 
-import model.AbstractModelClass;
+import modelsClasses.AbstractModel;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import pt.iflow.api.core.BeanFactory;
 import pt.iflow.api.documents.Documents;
+import pt.iflow.api.processtype.DataTypeEnum;
 import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.utils.UserInfoInterface;
@@ -175,7 +176,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       return;//throw new UtilEvalError("oops");
     }
     //TODO JM ver como é q se faz o set value para um tipo nao primitivo
-    //if(!(value instanceof AbstractModelClass))
+    //if(!(value instanceof AbstractModel))
       existing.setValue(value, BshVariable.V_ASSIGNMENT);
     
     if(isReadOnly()) return; // ignore if datasetmode not 1
@@ -226,11 +227,11 @@ public class ProcessDataNameSpace extends BshNameSpace {
       else if (value instanceof java.util.Date) {
         procVar.setValue(value);
       }
-      else if (value instanceof AbstractModelClass) {
+      else if (value instanceof AbstractModel) {
       // TODO: JM
         procVar.setValue(value);
         //ModelsManager.saveObj(value);
-        //procVar.setValue(((AbstractModelClass) value).getId());
+        //procVar.setValue(((AbstractModel) value).getId());
         
       }
       else {
@@ -267,9 +268,9 @@ public class ProcessDataNameSpace extends BshNameSpace {
     if(processVar != null) {
       clazz = dataType.getSupportingClass();
       obj = processVar.getValue();
-      if (dataType instanceof ModelsDataType/*&& obj!=null*/) {
+      if (dataType instanceof ModelsDataType) {
         try {
-          obj = getModelObject((AbstractModelClass)obj, clazz);
+          obj = getModelObject((AbstractModel)obj, (ModelsDataType)dataType);
         } catch (Exception e) {
           System.err.println(e.toString());
         }
@@ -376,25 +377,27 @@ public class ProcessDataNameSpace extends BshNameSpace {
     return var;
   }
   
-  private Object getModelObject(AbstractModelClass obj2, Class<?> clazz) {
+  private Object getModelObject(AbstractModel obj2, ModelsDataType dt) {
     Object obj = null;
+    Class<?> clazz = dt.getSupportingClass();
     try {
+      if (dt.toString().equals(DataTypeEnum.AbstractModel.toString())) {
+        if (obj2==null) return null;
+        dt = (ModelsDataType)(DataTypeEnum.getDataType(obj2.getClass().getSimpleName()).newDataTypeInstance());
+        dt.setClass(obj2.getClass().getSimpleName());
+        clazz = dt.getSupportingClass();
+      }
       obj = clazz.newInstance();
-      if(obj2==null)return obj;
-      //Object obj2 = ModelsManager.getObjInstance(objModel.getId());
+      if (obj2==null) return obj;
            
       Method[] metodosArray = obj2.getClass().getMethods();
-      
-      //Map<String, Class<?>> props = ModelsManager.getModelProperties(Integer.parseInt(obj2.getDocModel()));
       
       for(int i=0; i < metodosArray.length; i++){
         if(metodosArray[i].getName().startsWith("set")){
           String sufix = metodosArray[i].getName().substring(3);
           
           //TODO JM
-          //System.out.println(sufix);
           Class<?> clz = obj2.getClass().getMethod("get"+sufix).getReturnType();
-          //if(sufix.equals("Id")) clz= java.lang.Integer.class;
           Object result = (Object) obj2.getClass().getMethod("get"+sufix).invoke(obj2);
           if(result!=null)
             clazz.getMethod("set"+sufix, clz).invoke(obj, result);

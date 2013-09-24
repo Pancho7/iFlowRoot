@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import pt.iflow.api.utils.Const;
-import model.AbstractModelClass;
 import model.Metatags;
 import model.Models;
+import modelsClasses.AbstractModel;
 
 import integration.IntegrationFactory;
 import integration.MetatagsAccess;
@@ -20,7 +20,7 @@ public class ModelsManager {
   
   
   static{  
-    IntegrationFactory.setBaseURL("http://LXWIN7019.infosistema.com:8081/DocMetaTag/obj");
+    IntegrationFactory.setBaseURL(Const.META_TAGGING_URL);
   }
   private static ModelsAccess modelsAcc = new ModelsAccess();
   private static MetatagsAccess metatagsAcc = new MetatagsAccess();
@@ -84,11 +84,10 @@ public class ModelsManager {
       
      //TODO JM preencher docModel e path
       
-     ((AbstractModelClass)value).setPath("");
-     //((AbstractModelClass)value).setId(6);
+     ((AbstractModel)value).setPath("");
       
-     id = objAcc.saveObjects((AbstractModelClass)value);
-     ((AbstractModelClass)value).setId(id);
+     id = objAcc.saveObjects((AbstractModel)value);
+     ((AbstractModel)value).setId(id);
     } catch (Exception e) {
       System.err.println(e.toString());
     } 
