@@ -533,6 +533,7 @@ label.subheader {
 <div style="margin:auto;">
 <form enctype="multipart/form-data" method="post" name="dados" style="width: 100%;margin:auto;" id="dados" action="form.jsp">
 <input type="hidden" name="0_MAX_ROW" id="0_MAX_ROW" value="0">
+    <input type="hidden" name="2_MAX_ROW" id="2_MAX_ROW" value="0">
     <input type="hidden" name="subpid" id="subpid" value="-10">
     <input type="hidden" name="flowid" id="flowid" value="53">
     <input type="hidden" name="op" id="op" value="0">
@@ -548,7 +549,7 @@ label.subheader {
 <div class="columndivision">
 <ol class="fieldlist">
 <li class="header  field">
-<label class="header field">Form1</label>
+<label class="header field">Form2</label>
 </li>
 <li class="object_model  field">
 <table align="center" border="0" width="100%" id="fatura">
@@ -558,17 +559,49 @@ label.subheader {
 <tr>
 <td class="normal_text" align="left" valign="middle" width="100%"><label class=" field">Modelo</label></td><td class="normal_text" align="center"><select class="txt" name="fatura" onChange="presentModelProperties('fatura', this.value)"><option value="" selected></option><option value="fatura">fatura</option></select></td>
 </tr>
-<tr name="fatura" id="faturaAutor" style="display: none">
-<td class="normal_text" align="left" valign="middle" width="100%"><label class="Autor field">Autor</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="fatura.Autor" name="fatura.Autor" value="Josue" size="" maxlength=""></td>
+<tr name="fatura" id="faturafaturaAutor" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Autor field">Autor</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="fatura.Autor" name="fatura.Autor" value="Josue2" size="" maxlength=""></td>
 </tr>
-<tr name="fatura" id="faturaCriador" style="display: none">
+<tr name="fatura" id="faturafaturaCriador" style="display: none">
 <td class="normal_text" align="left" valign="middle" width="100%"><label class="Criador field">Criador</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="fatura.Criador" name="fatura.Criador" value="" size="" maxlength=""></td>
 </tr>
-<tr name="fatura" id="faturaTamanho" style="display: none">
-<td class="normal_text" align="left" valign="middle" width="100%"><label class="Tamanho field">Tamanho</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="fatura.Tamanho" name="fatura.Tamanho" value="333" size="" maxlength=""></td>
+<tr name="fatura" id="faturafaturaTamanho" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Tamanho field">Tamanho</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="fatura.Tamanho" name="fatura.Tamanho" value="444" size="" maxlength=""></td>
 </tr>
-<tr name="fatura" id="faturaDataCriacao" style="display: none">
+<tr name="fatura" id="faturafaturaDataCriacao" style="display: none">
 <td class="normal_text" align="left" valign="middle" width="100%"><label class="DataCriacao field">DataCriacao</label></td><td class="normal_text" align="center"><input size="" type="text" class="txt" id="fatura.DataCriacao" name="fatura.DataCriacao" value="" maxlength="" onmouseover="caltasks(this.id, '%Y/%m/%d');this.onmouseover=null;"><img src="/iFlow//images/icon_delete.png" border="0" onclick="javascript:document.getElementById('fatura.DataCriacao').value=''"></td>
+</tr>
+<script type="text/javascript"></script>
+</table>
+</li>
+<li class="object_model  field">
+<table align="center" border="0" width="100%" id="abs">
+<tr>
+<td align="center"><label class=" field">ABS</label></td>
+</tr>
+<tr>
+<td class="normal_text" align="left" valign="middle" width="100%"><label class=" field">Modelo</label></td><td class="normal_text" align="center"><select class="txt" name="abs" onChange="presentModelProperties('abs', this.value)"><option value="" selected></option><option value="fatura">fatura</option><option value="nota_encomenda">nota_encomenda</option></select></td>
+</tr>
+<tr name="fatura" id="absfaturaAutor" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Autor field">Autor</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Autor" name="abs.Autor" value="" size="" maxlength=""></td>
+</tr>
+<tr name="fatura" id="absfaturaCriador" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Criador field">Criador</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Criador" name="abs.Criador" value="" size="" maxlength=""></td>
+</tr>
+<tr name="fatura" id="absfaturaTamanho" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Tamanho field">Tamanho</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Tamanho" name="abs.Tamanho" value="" size="" maxlength=""></td>
+</tr>
+<tr name="fatura" id="absfaturaDataCriacao" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="DataCriacao field">DataCriacao</label></td><td class="normal_text" align="center"><input size="" type="text" class="txt" id="abs.DataCriacao" name="abs.DataCriacao" value="" maxlength="" onmouseover="caltasks(this.id, '%Y/%m/%d');this.onmouseover=null;"><img src="/iFlow//images/icon_delete.png" border="0" onclick="javascript:document.getElementById('abs.DataCriacao').value=''"></td>
+</tr>
+<tr name="nota_encomenda" id="absnota_encomendaAutor" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Autor field">Autor</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Autor" name="abs.Autor" value="absAutor2" size="" maxlength=""></td>
+</tr>
+<tr name="nota_encomenda" id="absnota_encomendaCriador" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Criador field">Criador</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Criador" name="abs.Criador" value="" size="" maxlength=""></td>
+</tr>
+<tr name="nota_encomenda" id="absnota_encomendaTamanho" style="display: none">
+<td class="normal_text" align="left" valign="middle" width="100%"><label class="Tamanho field">Tamanho</label></td><td class="normal_text" align="center"><input type="text" class="txt" id="abs.Tamanho" name="abs.Tamanho" value="" size="" maxlength=""></td>
 </tr>
 <script type="text/javascript"></script>
 </table>

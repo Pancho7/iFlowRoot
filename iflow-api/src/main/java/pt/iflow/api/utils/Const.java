@@ -102,6 +102,7 @@ public class Const {
   public static String DOCS_BASE_URL = null;
   public static String MODELS_PATH = null;
   public static String MODELS_PACKAGE_PATH = null;
+  public static final String sMODELS_PACKAGE = "modelsClasses";
 
   public static final String MISSING_PROC_MID_ERROR_MSG = "Informa&ccedil;&atilde;o sobre estado actual do processo n&atilde;o foi encontrada.<br>Por favor tente novamente.";
   public static final String PROC_CHANGED_ERROR_MSG = "Processo alterado por outro utilizador. Os presentes dados foram actualizados (as altera&ccedil;&otilde;es efectuadas n&atilde;o foram guardadas).";
@@ -677,7 +678,8 @@ public class Const {
     DOCS_BASE_URL = Setup.getProperty("DOCS_BASE_URL");
     
     MODELS_PATH = Setup.getProperty("MODELS_PATH");
-    MODELS_PACKAGE_PATH = Setup.getProperty("MODELS_PACKAGE_PATH");
+    if (MODELS_PATH != null)
+      MODELS_PACKAGE_PATH = MODELS_PATH + sMODELS_PACKAGE + "\\";
     
     try {
       sDELEGATION_NOTIFY_REQUEST_MODE = Setup.getProperty("DELEGATION_NOTIFY_REQUEST_MODE").toLowerCase();

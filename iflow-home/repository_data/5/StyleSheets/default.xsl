@@ -1317,6 +1317,7 @@ label.subheader {
                        <xsl:value-of select="../../modelname/text()"/>
                    </xsl:attribute>
                    <xsl:attribute name="id">
+                       <xsl:value-of select="../../../../variable/text()"/>
                        <xsl:value-of select="../../modelname/text()"/>
                        <xsl:value-of select="name/text()"/>
                    </xsl:attribute>

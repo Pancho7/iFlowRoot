@@ -271,6 +271,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       if (dataType instanceof ModelsDataType) {
         try {
           obj = getModelObject((AbstractModel)obj, (ModelsDataType)dataType);
+          processVar.setValue(obj);
         } catch (Exception e) {
           System.err.println(e.toString());
         }
