@@ -1783,7 +1783,6 @@ public class BlockFormulario extends Block implements FormOperations {
       TransformerException {
     String sLogin = userInfo.getUtilizador();
     String retObj = null;
-    System.out.println("lalala"+xml.toString());
     Transformer transformer = XslTransformerFactory.getTransformer(userInfo, sXsl);
     if (noPrint && null == transformer) {
       Logger.debug(sLogin, "BlockFormulario", "transformForm", "Stylesheet not found. Trying flow stylesheet...");
@@ -2535,7 +2534,6 @@ public class BlockFormulario extends Block implements FormOperations {
                 parseResult = dtiSimple.parseAndSetList(userInfo, retObj, idx, auxVName, 1, afdFormData, props, ignoreValidation, logBuffer);
               }else
                 parseResult = dtiSimple.parseAndSet(userInfo, retObj, varName, afdFormData, props, ignoreValidation, logBuffer);
-            //TODO JM neste break verifica se campo eh required e faz o set do value
             }
             else {
               Logger.debug(sLogin, this, "processForm", 

@@ -1443,12 +1443,6 @@ public class JSPFieldData {
         ((JTextArea)ec).setText(asValue);
       }
       break;
-      //TODO JM
-    /*case JSPFieldData.nPROP_MODELS_LABEL:
-      if (ec != null) {
-        ((JTextArea)ec).setText(asValue);
-      }
-      break;*/
     case JSPFieldData.nPROP_FORM_TEMPLATE:
       if (ec != null) {
         ((JComboBox) ec).setSelectedItem(asValue);
@@ -2593,8 +2587,6 @@ public class JSPFieldData {
         if (jValue == null) {
           jValue = new JTextArea(10,10);
           ((JTextArea)jValue).setBorder(BorderFactory.createLineBorder(Color.GRAY));
-          /*if(!modelsVarName.equals("AbstractModel"))
-            ((JTextArea)jValue).setEnabled(false); TODO JM*/
           this.setEditComponent(iProp, jValue);
         }
         ((JTextArea)jValue).setText(stmp);
@@ -3202,22 +3194,6 @@ public class JSPFieldData {
     List<String> list = new ArrayList<String>();
     for (int i = 0; i < catalogue.length; i++){
       Atributo atr = ((Atributo) catalogue[i]);
-      /*
-      Boolean notEnum = false;
-      Boolean isAbstract = true;
-      Boolean notList = false;
-      try{  
-        notEnum = !DataTypeEnum.isEnumDataType(atr.getDataType());
-        if(!notEnum){
-          isAbstract = DataTypeEnum.valueOf(atr.getDataType()).isAbstractModel();
-          notList = !DataTypeEnum.valueOf(atr.getDataType()).isList();
-        }
-      }catch(Exception e){
-        System.err.println(e.toString());
-      }
-      if((notEnum||isAbstract)&& notList) 
-        list.add(((Atributo) catalogue[i]).getNome());
-      */
       //TODO JM Ver caso em que o nome da variavel tem array mas nao eh array
       Boolean notEnum = !DataTypeEnum.isEnumDataType(atr.getDataType());
       if((!atr.getDataType().endsWith("Array")&& notEnum)){

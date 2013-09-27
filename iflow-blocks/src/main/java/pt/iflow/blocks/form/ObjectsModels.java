@@ -124,10 +124,9 @@ public class ObjectsModels implements FieldInterface {
       String modelDataType = prop.getProperty("modelDataType");
       
       Boolean instanciado = false;
-      if(objId!=null){
-        if(!objId.equals("")){
-          instanciado=true;
-        }
+      if (objModel != null){
+        instanciado=true;
+        modelDataType = objModel.getClass().getSimpleName();
       }
       
       List<String> modelsResList = new ArrayList<String>();
@@ -346,14 +345,4 @@ public class ObjectsModels implements FieldInterface {
       props.setProperty("modelDataType", pv.getType().toString());
     }
   }
-/*
-  private String replaceLeftBar(String textAreaValue) {
-    StringBuffer result = new StringBuffer();
-    if(textAreaValue != null && textAreaValue.length() > 0){
-      result.append(textAreaValue.replaceAll("\\r\\n", ""));
-    } else {
-      return "";
-    }
-    return result.toString();
-  }*/
 }

@@ -21,10 +21,13 @@ import pt.iflow.api.processdata.ProcessData;
 import pt.iflow.api.processdata.ProcessListVariable;
 import pt.iflow.api.processdata.ProcessSimpleVariable;
 import pt.iflow.api.processdata.ProcessVariableValue;
+import pt.iflow.api.processtype.DataTypeEnum;
+import pt.iflow.api.processtype.ModelsDataType;
 import pt.iflow.api.processtype.ProcessDataType;
 import pt.iflow.api.utils.Logger;
 import pt.iflow.api.utils.ServletUtils;
 import pt.iflow.api.utils.UserInfoInterface;
+import pt.iknow.utils.StringUtilities;
 import pt.iknow.utils.html.FormData;
 
 /**
@@ -185,15 +188,24 @@ public class ObjectModel implements DataTypeInterface {
     }
     
     ProcessDataType varType = procData.getVariableDataType(name);
-    Class<?> varClass = varType.getSupportingClass();
-    
     Object obj = null;
+    Class<?> varClass = varType.getSupportingClass();
+    String className = varClass.getSimpleName(); 
     
     ProcessSimpleVariable pVar = procData.get(name); 
     try {
       obj = pVar.getValue();
-      if (obj ==null) 
+      if (obj == null) {
+        String stmp = formData.getParameter(name);
+        if (StringUtilities.isNotEmpty(stmp)) {
+          className = stmp;
+          varClass = ModelsDataType.getSupportingClassForModel(className);
+        } 
+        if (DataTypeEnum.AbstractModel.toString().equals(className)) { 
+          return null;
+        }
         obj = varClass.newInstance();
+      }
     } catch (Exception e) {
       
     }
@@ -203,7 +215,7 @@ public class ObjectModel implements DataTypeInterface {
     Iterator<Entry<String, String[]>> it = aux.entrySet().iterator();
     while (it.hasNext()) {
         Map.Entry<String, String[]> pairs = (Map.Entry<String, String[]>)it.next();
-        if(pairs.getKey().startsWith(name+".")){
+        if(pairs.getKey().startsWith(name+"."+className+".")){
           String auxStr= pairs.getValue()[0];
           String auxStr2 = pairs.getKey().substring(pairs.getKey().lastIndexOf(name+"."));
           String metodoSet = auxStr2.replaceAll(name+".", "set");

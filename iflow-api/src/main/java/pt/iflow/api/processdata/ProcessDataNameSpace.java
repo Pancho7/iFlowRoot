@@ -161,9 +161,6 @@ public class ProcessDataNameSpace extends BshNameSpace {
   protected void setVariableImpl(String name, Object value, boolean strictJava, boolean recurse ) throws UtilEvalError {
     // TODO se a variavel nao foi minha, delega para o pai
 
-    if(name.equals("_jm"))
-      System.out.println("lalala");
-
     // primitives should have been wrapped
     if ( value == null )
       throw new InterpreterError("null variable value");
@@ -175,8 +172,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       setSuperVariable(name, value, strictJava, recurse);
       return;//throw new UtilEvalError("oops");
     }
-    //TODO JM ver como é q se faz o set value para um tipo nao primitivo
-    //if(!(value instanceof AbstractModel))
+
       existing.setValue(value, BshVariable.V_ASSIGNMENT);
     
     if(isReadOnly()) return; // ignore if datasetmode not 1
@@ -323,12 +319,8 @@ public class ProcessDataNameSpace extends BshNameSpace {
       
       if (dataType instanceof ModelsDataType){
         try {
-          obj = clazz.newInstance();
-          //Class<?> arrayType = 
-              Array.newInstance(clazz,length).getClass();
-         // obj= Array.newInstance(arrayType,length);
-         // obj =  new   (Object)Array.newInstance(clazz, length);
-          System.out.println("lalala");
+          obj = clazz.newInstance(); 
+          Array.newInstance(clazz,length).getClass();
         } catch (Exception e) {
           e.printStackTrace();
         } 
@@ -396,8 +388,7 @@ public class ProcessDataNameSpace extends BshNameSpace {
       for(int i=0; i < metodosArray.length; i++){
         if(metodosArray[i].getName().startsWith("set")){
           String sufix = metodosArray[i].getName().substring(3);
-          
-          //TODO JM
+
           Class<?> clz = obj2.getClass().getMethod("get"+sufix).getReturnType();
           Object result = (Object) obj2.getClass().getMethod("get"+sufix).invoke(obj2);
           if(result!=null)

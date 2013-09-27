@@ -118,8 +118,7 @@ public class ModelsManager {
       while(it.hasNext()) {
         Models m = (Models)it.next();
         String aux = ((Metatags)metatagsAcc.GETObjectsID(m.getModelspk().getMetaTagId())).getLabel();
-        listRes.add(aux);
-        System.out.println("lalalb"+aux); 
+        listRes.add(aux); 
       }
     } catch (Exception e) {
       System.err.println(e.toString());
@@ -134,8 +133,7 @@ public class ModelsManager {
       Iterator<Object> it = list.iterator();
       while(it.hasNext()) {
         Models m = (Models)it.next();
-        listRes.add(m.getModelName());
-        System.out.println("lalalc"+m.getModelName()); 
+        listRes.add(m.getModelName()); 
       }
     } catch (Exception e) {
       System.err.println(e.toString());
