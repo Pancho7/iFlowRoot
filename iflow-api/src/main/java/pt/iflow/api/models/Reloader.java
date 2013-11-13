@@ -18,7 +18,7 @@ public class Reloader extends ClassLoader {
     }
 
     @Override
-    public Class<?> findClass(String className) {
+    /*public Class<?> findClass(String className) {
         String aux2 = null;   
         String className2 = null;
         try {
@@ -54,6 +54,42 @@ public class Reloader extends ClassLoader {
             ioe.printStackTrace(System.out);
             return null;
         }
+    }*/
+    public Class<?> findClass(String className) {
+      String aux2 = null;   
+      String className2 = null;
+      try {
+        return java.lang.Class.forName(className);
+      } catch (Exception e) {
+        try {
+          String str = "modelsClasses";
+          String[] aux = className.split(str);
+   
+          if(aux.length>1){
+            aux2=str+aux[aux.length-1];
+          }
+          else{
+            aux2 = className;
+          }
+          byte[] bytes = loadClassData(className);
+          return defineClass(aux2, bytes, 0, bytes.length);
+        } catch (IOException ioe) {
+          try {
+            aux2 = className;
+            className2 = Const.MODELS_PATH + className;
+            byte[] bytes = loadClassData(className2);
+            return defineClass(aux2, bytes, 0, bytes.length);
+          } catch (IOException ioe2) {
+            try {
+              return ClassLoader.getSystemClassLoader().loadClass(className);
+            } catch (Exception ex) {
+              
+            }
+          }
+          ioe.printStackTrace(System.out);
+          return null;
+        }
+      }
     }
 
     private byte[] loadClassData(String className) throws IOException {
