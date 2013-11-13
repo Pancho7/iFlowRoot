@@ -132,6 +132,11 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>pt.infosistema.docmetatag</groupId>
+			<artifactId>metatag-client</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

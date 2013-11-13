@@ -678,8 +678,10 @@ public class Const {
     DOCS_BASE_URL = Setup.getProperty("DOCS_BASE_URL");
     
     MODELS_PATH = Setup.getProperty("MODELS_PATH");
-    if (MODELS_PATH != null)
+    if (MODELS_PATH != null) {
+      MODELS_PATH = MODELS_PATH + (MODELS_PATH.endsWith("\\") ? "" : "\\");
       MODELS_PACKAGE_PATH = MODELS_PATH + sMODELS_PACKAGE + "\\";
+    }
     
     try {
       sDELEGATION_NOTIFY_REQUEST_MODE = Setup.getProperty("DELEGATION_NOTIFY_REQUEST_MODE").toLowerCase();
